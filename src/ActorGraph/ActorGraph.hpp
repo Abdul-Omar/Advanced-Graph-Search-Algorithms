@@ -11,7 +11,8 @@
 #define ACTORGRAPH_HPP
 #include <Actor.hpp>
 #include <iostream>
-#include <map>
+#include <set>
+#include <unordered_set>
 #include <vector>
 
 // Maybe include some data structures here
@@ -25,10 +26,12 @@ class ActorGraph {
   protected:
     // Maybe add class data structure(s) here
     
-    set<Actor> actors;//list of co-starring actors
+    unordered_set<Actor*> actors;//list of all actors in the file
+    
+    set<Movie*> movies;// set of all movies in the file
     
     //adjency list, each actor mapped against co-starring actors
-    map <Actor, actors> adjacencyList;
+    
 
   public:
     /**
@@ -49,6 +52,12 @@ class ActorGraph {
      * return true if file was loaded sucessfully, false otherwise
      */
     bool loadFromFile(const char* in_filename, bool use_weighted_edges);
+    
+    /* function to build nodes and their connections */
+    void buildGraph();
+    
+    /* finds the shortest path between any two actors in the graph */
+    string findShortestPath( Actor* & actor1, Actor* actor2 );
     
 };
 
