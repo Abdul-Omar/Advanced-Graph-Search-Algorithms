@@ -25,10 +25,10 @@ class ActorGraph {
   protected:
     // Maybe add class data structure(s) here
     
-    Vector<Actor> actors;//list of co-starring actors
+    set<Actor> actors;//list of co-starring actors
     
     //adjency list, each actor mapped against co-starring actors
-    map <Actor, actors> adjacenList;
+    map <Actor, actors> adjacencyList;
 
   public:
     /**
