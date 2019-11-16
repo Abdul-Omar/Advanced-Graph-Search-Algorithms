@@ -9,8 +9,10 @@
 
 #ifndef ACTORGRAPH_HPP
 #define ACTORGRAPH_HPP
-
+#include <Actor.hpp>
 #include <iostream>
+#include <map>
+#include <vector>
 
 // Maybe include some data structures here
 
@@ -22,6 +24,11 @@ using namespace std;
 class ActorGraph {
   protected:
     // Maybe add class data structure(s) here
+    
+    Vector<Actor> actors;//list of co-starring actors
+    
+    //adjency list, each actor mapped against co-starring actors
+    map <Actor, actors> adjacenList;
 
   public:
     /**
