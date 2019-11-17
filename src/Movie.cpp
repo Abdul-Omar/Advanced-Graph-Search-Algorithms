@@ -1,63 +1,32 @@
 
 #include <iostream>
 #include<string>
+#include <Movie.hpp>
 #include<Actor.hpp>
 #include<bits/stdc++.h>
 
 using namespace std;
 
-/* This class acts as the link or edge connecting actors */
-class Movie { 
-
-        protected:
-		
-		vector<Actor*> actors;// all actor(s) starring in this movie
-
-	public:	
-
-	string name;//name of movie
-
-	int year;// year movie came out
+ /* add an actor to list of actors starring in this  movie*/
+ void addActor( Actor* actor) {  
 	
-	set<Actor*> actors;// actor(s) starring in this movie
+     actors.insert(actor);   
 	
-	//constructor for the class
-	Movie(string name, int year) : name(name) , year(year) {  }
-
-	/* add an actor to list of actors starring in this  movie*/
-        void addActor( Actor* actor) {  
-	
-	   actors.insert(actor);   
-	
-	}
-	/* This function returns all actors depicted in this movie*/
-	set<Actor*> getAllActors( ) { 
-	
-	   return actors;	
-	}
-	/* Checks if two actors star in the same movie
-	 */
-	bool checkIfCostars( const Actor & actor1, const Act) { 
-       
-	   if( actors.find(actor1) != actors.end() && actors.find(actor2) != actors.end())
-	
-		 return true;
-	  }
-	  
-	 return false;      	
 }
-/* struct used to compare elements. Needed by set data structure */
-struct movieComparator{
-    
-	bool operator() (Movie* const & a, Movie* const & b) { 
-	   
-	   //if similar names, sort them by year
-	   if(a->name.compare(b->name) == 0) {
-	   
-	     return a->year < b->year;
-	 }
-	   //else sort them by names
-	 return a->name < b-> name;
+/* This function returns all actors depicted in this movie*/
+set<Actor*> getAllActors( ) { 
+	
+  return actors;	
+}
+/* Checks if two actors star in the same movie */
+bool checkIfCostars( const Actor & actor1, const Actor & actor2) { 
+       
+    if( actors.find(actor1) != actors.end() && actors.find(actor2) != actors.end())
+	
+	return true;
     }
-};
+	  
+   return false;      	
+}
+
 
