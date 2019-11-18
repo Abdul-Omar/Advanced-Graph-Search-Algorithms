@@ -19,7 +19,7 @@ set<Actor*> getAllActors( ) {
   return actors;	
 }
 /* Checks if two actors star in the same movie */
-bool checkIfCostars( const Actor & actor1, const Actor & actor2) { 
+bool checkIfCostars( const Actor* & actor1, const Actor* & actor2) { 
        
     if( actors.find(actor1) != actors.end() && actors.find(actor2) != actors.end())
 	
