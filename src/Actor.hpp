@@ -30,11 +30,7 @@ class Actor {
 		};
 
                 /* THis function essentially acts as the link or edge between two Actor Nodes */
-		void connectActors( pair<Movie, Actor> neighbor) {  
-		
-		    neighbors.emplace_back(neighbor);  
-		
-		}		
+		void connectActors( pair<Movie, Actor> neighbor);		
 			
 };
 /* used by un_oredered set for hashing */
