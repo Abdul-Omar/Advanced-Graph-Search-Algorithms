@@ -17,20 +17,20 @@ class Actor {
 
 		string name;//the name of the actor
 
-		Movie movie;//single movie actor stars in
+		vector<Movie*> actorMovies;//all movies actor stars in
 	        
 		//actor's adjacency list
-		vector<pair< Movie, Actor>> neighbors; 
+		vector<Actor*>> neighbors; 
 	
 		//constructor for the class
-		Actor( string name, Movie movie) : name(name), movie(movie) { 
+		Actor( string name, Movie* movie) : name(name) { 
 		
-		   movies.insert(movie);//add move to list of movies
+		   ActorMovies.insert(movie);//add move to list movies for actor
 		
 		};
 
                 /* THis function essentially acts as the link or edge between two Actor Nodes */
-		void connectActors( pair<Movie, Actor> neighbor);		
+		void connectActors( Actor* neighbor);		
 			
 };
 /* used by un_oredered set for hashing */
