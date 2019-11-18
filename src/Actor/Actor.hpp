@@ -2,10 +2,11 @@
 #define ACTOR_HPP
 
 #include <iostream>
-#include<string>
-#include<pair>
-#include<vector>
-#include<bits/stdc++.h>
+#include <string>
+#include <pair>
+#include <vector>
+#include <bits/stdc++.h>
+#include "Movie.hpp"
 
 using namespace std;
 /** This class forms the nodes in the graph

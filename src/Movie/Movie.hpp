@@ -1,8 +1,8 @@
 
 #include <iostream>
-#include<string>
-#include<Actor.hpp>
-#include<bits/stdc++.h>
+#include <string>
+#include <bits/stdc++.h>
+#include "Actor.hpp"
 
 using namespace std;
 
