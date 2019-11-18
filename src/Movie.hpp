@@ -35,7 +35,7 @@ class Movie {
 	 */
 	bool checkIfCostars( const Actor & actor1, const Actor& actor2); 
        
-	  	  
+};  	  
 /* struct used to compare elements. Needed by set data structure */
 struct movieComparator{
     
