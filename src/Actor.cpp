@@ -9,7 +9,7 @@
 
 using namespace std;    
 /* THis function essentially acts as the link or edge between two Actor Nodes */
-void connectActors( pair<Movie, Actor> neighbor) {  		    
+void connectActors( Actor* neighbor) {  		    
 	
 	neighbors.emplace_back(neighbor);  		
 }		
