@@ -72,6 +72,18 @@ bool ActorGraph::loadFromFile(const char* in_filename, bool use_weighted_edges) 
         int year = stoi(record[2]);
         
         // TODO: we have an actor/movie relationship, now what?
+        //create a movie and actor objects
+        Movie movie* = new Movie(movie_title, year);
+        Actor actorr* = new Actor(actor, movie);
+        
+        //add this actor to actors starring in this movie
+        movie->addActor(Actorr);
+        
+        //add actor to list of actors
+        actors.insert(actorr);
+        
+        //add movie to list of movies.
+        movies.insert(movie);
     }
     if (!infile.eof()) {
         cerr << "Failed to read " << in_filename << "!\n";
