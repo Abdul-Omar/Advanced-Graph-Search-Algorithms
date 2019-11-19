@@ -163,7 +163,7 @@ vector<string> ActorGraph::shortestPath(Actor* actor1, Actor* actor2) {
 	path.emplace_back(current->getName());
         
 	toExplore.pop();
-        
+        if(current == actor2) break;//if we have reached thedesination actor
 	vector<pair<Actor*, Movie*>::iterator it = current->neighbors.begin();
         
 	for (; it != current->neighbors.end(); ++it) {
