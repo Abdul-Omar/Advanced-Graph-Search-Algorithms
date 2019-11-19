@@ -3,8 +3,9 @@
  * Author: <YOUR NAME HERE>
  * Date:   <DATE HERE>
  *
- * This file is meant to exist as a container for starter code that you can use to read the input file format
- * defined imdb_2019.tsv. Feel free to modify any/all aspects as you wish.
+ * This file is meant to exist as a container for starter code that you can use
+ * to read the input file format defined imdb_2019.tsv. Feel free to modify
+ * any/all aspects as you wish.
  */
 
 #ifndef ACTORGRAPH_HPP
@@ -25,13 +26,12 @@ using namespace std;
 class ActorGraph {
   protected:
     // Maybe add class data structure(s) here
-    
-    unordered_set<Actor*> actors;//list of all actors in the file
-    
-    set<Movie*> movies;// set of all movies in the file
-    
-    //adjency list, each actor mapped against co-starring actors
-    
+
+    unordered_set<Actor*, Actor_hash> actors;  // list of all actors in the file
+
+    set<Movie*> movies;  // set of all movies in the file
+
+    // adjency list, each actor mapped against co-starring actors
 
   public:
     /**
@@ -40,25 +40,24 @@ class ActorGraph {
     ActorGraph(void);
 
     // Maybe add some more methods here
-  
+
     /** You can modify this method definition as you wish
      *
      * Load the graph from a tab-delimited file of actor->movie relationships.
      *
      * in_filename - input filename
-     * use_weighted_edges - if true, compute edge weights as 1 + (2019 - movie_year), 
-     *                      otherwise all edge weights will be 1
+     * use_weighted_edges - if true, compute edge weights as 1 + (2019 -
+     * movie_year), otherwise all edge weights will be 1
      *
      * return true if file was loaded sucessfully, false otherwise
      */
     bool loadFromFile(const char* in_filename, bool use_weighted_edges);
-    
+
     /* function to build nodes and their connections */
     void buildGraph();
-    
+
     /* finds the shortest path between any two actors in the graph */
-    string findShortestPath( Actor* & actor1, Actor* actor2 );
-    
+    Vector<string> findShortestPath(Actor*& actor1, Actor* actor2);
 };
 
 #endif  // ACTORGRAPH_HPP

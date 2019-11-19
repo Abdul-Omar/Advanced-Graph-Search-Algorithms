@@ -6,6 +6,3 @@
 
 using namespace std;
 using namespace testing;
-
-
-
