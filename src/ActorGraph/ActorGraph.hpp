@@ -10,14 +10,16 @@
 
 #ifndef ACTORGRAPH_HPP
 #define ACTORGRAPH_HPP
-#include <Actor.hpp>
 #include <iostream>
 #include <set>
 #include <unordered_set>
 #include <vector>
+#include "Actor.hpp"
+#include "Movie.hpp"
 
 // Maybe include some data structures here
-
+class Movie;
+class Actor;
 using namespace std;
 
 /**
@@ -27,9 +29,9 @@ class ActorGraph {
   protected:
     // Maybe add class data structure(s) here
 
-    unordered_set<Actor*, Actor_hash> actors;  // list of all actors in the file
+    set<Actor*> actors;  // list of all actors in the file
 
-    set<Movie*> movies;  // set of all movies in the file
+    set<Movie*, movieComparator> movies;  // set of all movies in the file
 
     // adjency list, each actor mapped against co-starring actors
 
@@ -57,7 +59,7 @@ class ActorGraph {
     void buildGraph();
 
     /* finds the shortest path between any two actors in the graph */
-    Vector<string> findShortestPath(Actor*& actor1, Actor* actor2);
+    vector<string> shortestPath(Actor*& actor1, Actor*& actor2);
 };
 
 #endif  // ACTORGRAPH_HPP

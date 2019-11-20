@@ -9,16 +9,16 @@
  */
 
 #include "ActorGraph.hpp"
+#include <bits/stdc++.h>
 #include <fstream>
 #include <iostream>
+#include <limits>
+#include <queue>
 #include <set>
 #include <sstream>
 #include <string>
 #include <unordered_set>
 #include <vector>
-#include<limits>
-#include<queue>
-#include<bits/stdc++.h>
 
 using namespace std;
 
@@ -63,8 +63,8 @@ bool ActorGraph::loadFromFile(const char* in_filename,
         while (ss) {
             string str;
 
-            // get the current string before hitting a tab character and put it in
-            // 'str'
+            // get the current string before hitting a tab character and put it
+            // in 'str'
             if (!getline(ss, str, '\t')) break;
             record.push_back(str);
         }
@@ -140,49 +140,55 @@ void ActorGraph::buildGraph() {
         }
     }
 }
-vector<string> ActorGraph::shortestPath(Actor* actor1, Actor* actor2) {
-    
-   //initialize all distances to zero
-   for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
-        *iter->dist = std::numeric_limits<double>::infinity();
- 
+
+vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
+    // initialize all distances to zero
+    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
+        (*iter)->dist = std::numeric_limits<double>::infinity();
+    }
+
     queue<Actor*> toExplore;
-    vector<string> path;//holds the shortest path from one actor to another
-    
-    Actor* start = actorsfind(actor1);
-    
+
+    vector<string> path;  // holds the shortest path from one actor to another
+
+    auto iter = actors.find(actor1);
+
+    Actor* start = *iter;
+
     start->dist = 0;
-    
+
     toExplore.push(start);
-    
+
     while (!toExplore.empty()) {
-        
-	Actor* current = toExplore.front();
-        
-	//add Name to current Path
-	path.emplace_back(current->getName());
-        
-	toExplore.pop();
-        if(current == actor2) break;//if we have reached thedesination actor
-	vector<pair<Actor*, Movie*>::iterator it = current->neighbors.begin();
-        
-	for (; it != current->neighbors.end(); ++it) {
-	       //movie neighbor shares with current actor
-	       Movie* sharedMovie = (*it)->second;
-             //get the neighbor
-	     Actor* neighbor = actors.find((*it)->first);
-             
-	    if (neighbor->dist == INT_MAX) {
+        Actor* current = toExplore.front();
+
+        // add Name to current Path
+        path.emplace_back(current->name);
+
+        toExplore.pop();
+
+        if (current == actor2) break;  // if we have reached thedesination actor
+
+        auto it = current->neighbors.begin();
+
+        for (; it != current->neighbors.end(); ++it) {
+            // movie neighbor shares with current actor
+            Movie* sharedMovie = (*it).second;
+
+            // get the neighbor
+            auto iter3 = actors.find((*it).first);
+
+            Actor* neighbor = *iter3;
+
+            if (neighbor->dist == INT_MAX) {
                 neighbor->dist = current->dist + 1;
                 neighbor->prev = current;
-		//add movie to the path
-		path.emplace_back(sharedMovie->getName());
+                // add movie to the path
+                path.emplace_back(sharedMovie->getName());
                 toExplore.push(neighbor);
             }
         }
     }
 
-    return paths;
+    return path;
 }
-
-int main() { return 0; }

@@ -8,3 +8,5 @@ movie = library('movie', sources: ['Movie.cpp', 'Movie.hpp'])
 
 actor_graph_dep = declare_dependency(include_directories: inc,
 	link_with: [actorGraph, actor, movie])
+actor_graph_dep = declare_dependency(include_directories: inc,
+	link_with: [actorGraph, movie, actor])

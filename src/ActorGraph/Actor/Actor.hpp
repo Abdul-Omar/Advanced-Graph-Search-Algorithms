@@ -19,6 +19,7 @@ class Actor {
 
     // actor's adjacency list
     vector<pair<Actor*, Movie*>> neighbors;
+
     Actor* prev = nullptr;
     int dist;
 
@@ -28,19 +29,8 @@ class Actor {
     /* THis function essentially acts as the link or edge between two Actor
      * Nodes */
     void connectActors(pair<Actor*, Movie*> neighbor);
+
+    bool operator<(const Actor*& b) { return (this->name < b->name); }
 };
 
-/* used by un_oredered set for hashing */
-struct ActorComparator {
-    bool operator == (Actor* const& a, Actor* const& b) {
-        return a->name == b->name;
-    }
-};
-
-struct Actor_hash {
-    std::size_t operator()(const Actor*& actor) const {
-        return std::hash<std::string>()(actor->name) ^
-               hash<string>()(actor->name);
-    }
-};
 #endif

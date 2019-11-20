@@ -1,9 +1,7 @@
-#ifndef ACTOR_HPP
-#define ACTOR_HPP
 
+#include "Actor.hpp"
 #include <bits/stdc++.h>
 #include <iostream>
-#include <pair>
 #include <string>
 #include <vector>
 
