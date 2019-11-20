@@ -1,11 +1,7 @@
 /*
  * PathFinder.cpp
  * Author: <YOUR NAME HERE>
- * Date:   <DATE HERE>
  *
- * This file is meant to exist as a container for starter code that you can use
- * to read the input file format defined in imdb_2019.tsv. Feel free to modify
- * any/all aspects as you wish.
  */
 
 #include <bits/stdc++.h>
@@ -25,8 +21,7 @@
 
 using namespace std;
 
-class PathFinder {
-    bool loadTestPairs(const char* in_filename,
+	bool loadTestPairs(string in_filename,
                        vector<pair<string, string>>& pair) {
         // Initialize the file stream
         ifstream infile(in_filename);
@@ -67,50 +62,49 @@ class PathFinder {
             string actor1(record[0]);
             string actor2(record[1]);
 
-            pairs.emplace_back(make_pair(actor1, actor2);//add to list of pairs     
+            pair.emplace_back(make_pair(actor1, actor2));//add to list of pairs     
 	   	   
 	    if (!infile.eof()) {
                 cerr << "Failed to read " << in_filename << "!\n";
-                return;
+                return false;
             }
             infile.close();
 
              return true;
         }
-    };
-
-    int main() {
-        PathFinder pathFinder;
-
-        string database(argv[1]);  // database file
-
-        string pairsFile(argv[2]);  // the file containing the pairs
-
-        ofstream out;
-
-        out.open("outout_paths_unweighted.tsv");
-
-        vector<pair<string, string>> pairs;
-
-        pathFinder.loadTestPairs(pairsFile, pairs);  // load the test pairs
-
-        ActorGraph graph;
-
-        // write the header of the file first
-        out << "(actor)--[movie#@year]-->(actor)--..." << endl;
-
-        // find shortest path between each pair of actors
-        for (auto it = pairs.begin(); it != pairs.end(); ++it) {
-            pair<string, string> actors = *it;
-
-            Actor* actor1 = new Actor(actors.first);
-            Actor* actor2 = new Actor(actors.second);
-
-            graph.shortestPath(actor1, actor2);
-
-            delete (actor1);
-            delete (actor2);
-        }
-
-        return 0
     }
+
+
+int main(int argc, char* argv[]) {
+    string database(argv[1]);  // database file
+
+    string pairsFile(argv[2]);  // the file containing the pairs
+
+    ofstream out;
+
+    out.open("outout_paths_unweighted.tsv");
+
+    vector<pair<string, string>> pairs;
+
+    loadTestPairs(pairsFile, pairs);  // load the test pairs
+
+    ActorGraph graph;
+
+    // write the header of the file first
+    out << "(actor)--[movie#@year]-->(actor)--..." << endl;
+
+    // find shortest path between each pair of actors
+    for (auto it = pairs.begin(); it != pairs.end(); ++it) {
+        pair<string, string> actors = *it;
+
+        Actor* actor1 = new Actor(actors.first);
+        Actor* actor2 = new Actor(actors.second);
+
+        graph.shortestPath(actor1, actor2);
+
+        delete (actor1);
+        delete (actor2);
+    }
+
+    return 0;
+}

@@ -60,6 +60,9 @@ class ActorGraph {
 
     /* finds the shortest path between any two actors in the graph */
     vector<string> shortestPath(Actor*& actor1, Actor*& actor2);
+    
+    // Deconstructor
+    ~ActorGraph();
 };
 
 #endif  // ACTORGRAPH_HPP

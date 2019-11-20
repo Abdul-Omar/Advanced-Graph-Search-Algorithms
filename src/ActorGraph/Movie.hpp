@@ -18,9 +18,9 @@ class Movie {
 
     int year;  // year movie came out
 
-    set<Actor*> actors;  // actor(s) starring in this movie
-
   public:
+    set<Actor*> actors;  // actor(s) starring in this movie
+    
     string getName() { return name; }
 
     int getYear() { return year; }

@@ -192,3 +192,17 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
 
     return path;
 }
+
+ActorGraph::~ActorGraph(){
+	//delete all movies
+	for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
+        	delete *iter;
+	}
+
+	//delete all actors
+	for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
+        	delete *iter;
+	}
+
+}
+
