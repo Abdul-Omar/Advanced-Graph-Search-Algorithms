@@ -78,36 +78,40 @@ bool ActorGraph::loadFromFile(const char* in_filename,
         string movie_title(record[1]);
         int year = stoi(record[2]);
 
+
+	
+
         // create a movie and actor objects
         Actor* newActor = new Actor(actor);
         Movie* newMovie = new Movie(movie_title, year);
 
-        // add this actor to actors starring in this movie
-        newMovie->addActor(newActor);
-
-        bool movieFound = false;
-        bool actorFound = false;
-
+       
         // add actor to list of actors
         if (actors.find(newActor) == actors.end()) {
             actors.insert(newActor);
         } else {
             auto iter = actors.find(newActor);
-            actorFound = true;
+	    delete newActor;
+	    newActor = *iter;
         }
+
         // add actor to list of actors
         if (movies.find(newMovie) == movies.end()) {
             // add movie to list of movies.
             movies.insert(newMovie);
-        } else {
-            auto iter = movies.find(newMovie);
-
-            (*iter)->addActor(newActor);
-            movieFound = true;
+	    
+	    newMovie->addActor(newActor);
+       
+       	} else {
+	    
+		    
+	    if((newMovie->actors).find(newActor) == (newMovie->actors).end()){
+            	auto iter = movies.find(newMovie);
+            	(*iter)->addActor(newActor);
+		
+	    }
+	    delete newMovie;
         }
-
-        if (movieFound) delete (newMovie);
-        if (actorFound) delete (newActor);
     }
 
     if (!infile.eof()) {
@@ -126,6 +130,7 @@ void ActorGraph::buildGraph() {
         // get all actors in this movie
         set<Actor*> actorsInMovie = movie->getAllActors();
 
+
         // connect all actors in this movie
         for (auto iter2 = actorsInMovie.begin(); iter2 != actorsInMovie.end();
              ++iter2) {
@@ -134,17 +139,27 @@ void ActorGraph::buildGraph() {
             for (auto iter3 = actorsInMovie.begin();
                  iter3 != actorsInMovie.end(); ++iter3) {
                 Actor* actor2 = *iter3;
-                actor1->connectActors(
-                    make_pair(actor2, movie));  // connect actors
+ 		
+		//prevent self loops in graph
+		if(actor1 == actor2) continue;
+                
+		pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
+		pair<Actor*, Movie*> p2 = make_pair(actor2, movie);
+		actor1->connectActors( p2 ) ;  // connect actors
+		actor2->connectActors(p1);
+
+		
             }
         }
     }
 }
 
 vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
+  
     // initialize all distances to zero
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
-        (*iter)->dist = std::numeric_limits<double>::infinity();
+        (*iter)->dist = INT_MAX;
+	(*iter)->prev = nullptr;
     }
 
     queue<Actor*> toExplore;
@@ -152,17 +167,26 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
     vector<string> path;  // holds the shortest path from one actor to another
 
     auto iter = actors.find(actor1);
-
+    
+    if(iter == actors.end())  {   
+	    
+	    cout << "actor does not exist "<<endl;
+	    
+	    return path;
+    
+    }
+   // cout << (*iter)->name<<endl;
+    
     Actor* start = *iter;
-
     start->dist = 0;
 
     toExplore.push(start);
 
     while (!toExplore.empty()) {
-        Actor* current = toExplore.front();
-
-        // add Name to current Path
+       
+	 Actor* current = toExplore.front();
+         
+        //add Name to current Path
         path.emplace_back(current->name);
 
         toExplore.pop();
@@ -172,9 +196,10 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
         auto it = current->neighbors.begin();
 
         for (; it != current->neighbors.end(); ++it) {
+			
             // movie neighbor shares with current actor
             Movie* sharedMovie = (*it).second;
-
+	
             // get the neighbor
             auto iter3 = actors.find((*it).first);
 
@@ -189,6 +214,10 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
             }
         }
     }
+
+    auto iterat = actors.find(actor2);
+
+    if((*iterat)->prev == nullptr) return path;
 
     return path;
 }

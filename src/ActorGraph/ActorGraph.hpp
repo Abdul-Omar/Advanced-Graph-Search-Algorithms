@@ -29,7 +29,7 @@ class ActorGraph {
   protected:
     // Maybe add class data structure(s) here
 
-    set<Actor*> actors;  // list of all actors in the file
+    set<Actor*, ActorComparator> actors;  // list of all actors in the file
 
     set<Movie*, movieComparator> movies;  // set of all movies in the file
 

@@ -21,16 +21,24 @@ class Actor {
     vector<pair<Actor*, Movie*>> neighbors;
 
     Actor* prev = nullptr;
-    int dist;
+    int dist = 0;
 
     // constructor for the class
     Actor(string name) : name(name){};
 
     /* THis function essentially acts as the link or edge between two Actor
      * Nodes */
-    void connectActors(pair<Actor*, Movie*> neighbor);
-
-    bool operator<(const Actor*& b) { return (this->name < b->name); }
+    void connectActors(pair<Actor*, Movie*> & neighbor);
 };
+
+/* struct used to compare elements. Needed by set data structure */
+struct ActorComparator {
+    bool operator()(Actor* const& a, Actor* const& b) {
+                // else sort them by names
+        return a->name< b->name;
+    }
+};
+
+
 
 #endif

@@ -10,6 +10,7 @@
 #include <limits>
 #include <queue>
 #include <set>
+#include<vector>
 #include <sstream>
 #include <string>
 #include <unordered_set>
@@ -21,7 +22,7 @@
 
 using namespace std;
 
-	bool loadTestPairs(string in_filename,
+bool loadTestPairs(string in_filename,
                        vector<pair<string, string>>& pair) {
         // Initialize the file stream
         ifstream infile(in_filename);
@@ -63,16 +64,16 @@ using namespace std;
             string actor2(record[1]);
 
             pair.emplace_back(make_pair(actor1, actor2));//add to list of pairs     
-	   	   
+
+        }
 	    if (!infile.eof()) {
                 cerr << "Failed to read " << in_filename << "!\n";
                 return false;
-            }
-            infile.close();
+           }
 
-             return true;
-        }
-    }
+	   infile.close();
+           return true;
+}
 
 
 int main(int argc, char* argv[]) {
@@ -82,25 +83,49 @@ int main(int argc, char* argv[]) {
 
     ofstream out;
 
-    out.open("outout_paths_unweighted.tsv");
+    out.open(argv[3]);
 
     vector<pair<string, string>> pairs;
 
-    loadTestPairs(pairsFile, pairs);  // load the test pairs
+    bool success = loadTestPairs(pairsFile, pairs);  // load the test pairs
 
     ActorGraph graph;
+
+    graph.loadFromFile(argv[1], false);
+
+    graph.buildGraph();//build the graph to search
 
     // write the header of the file first
     out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
+	
     // find shortest path between each pair of actors
     for (auto it = pairs.begin(); it != pairs.end(); ++it) {
-        pair<string, string> actors = *it;
+       int count = 1;
+         pair<string, string> actors = *it;
 
         Actor* actor1 = new Actor(actors.first);
         Actor* actor2 = new Actor(actors.second);
 
-        graph.shortestPath(actor1, actor2);
+       vector<string> path = graph.shortestPath(actor1, actor2);
+
+
+       for( auto iter = path.begin(); iter != path.end(); ++iter) {  
+
+
+       	  out<< *iter;
+
+	  if(count == 3){
+		out<<endl;
+		count = 0;
+	  }
+	  else{
+		  out<< " -> ";
+	  }
+
+	  count++;
+       }
+       out<<endl;
 
         delete (actor1);
         delete (actor2);
