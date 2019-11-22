@@ -19,7 +19,7 @@ class Actor {
 
     // actor's adjacency list
     vector<pair<Actor*, Movie*>> neighbors;
-
+    Movie* sharedMovie = nullptr;
     Actor* prev = nullptr;
     int dist = 0;
 

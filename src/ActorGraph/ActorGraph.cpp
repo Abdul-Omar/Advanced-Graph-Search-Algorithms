@@ -159,6 +159,7 @@ void ActorGraph::buildGraph() {
  * different actors
  */
 vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
+    
     // initialize all distances to zero
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         (*iter)->dist = INT_MAX;
@@ -187,40 +188,50 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
        
 	 Actor* current = toExplore.front();
 
-       
-        toExplore.pop();
+	toExplore.pop();
 
         if (current->name.compare( actor2->name)  == 0 )break;  // if we have reached thedesination actor
 
         auto it = current->neighbors.begin();
-	int i = 0;
-        for (; it != current->neighbors.end(); ++it) {
-            cout << "We've been through here " << i << " number of times." << endl;
-	    if (current->name.compare( actor2->name)  == 0 )return path; 
-	    //movie neighbor shares with current actor
+        
+	for (; it != current->neighbors.end(); ++it) {
+           	   
+            //movie neighbor shares with current actor
             Movie* sharedMovie = (*it).second;
 
             // get the neighbor
             auto iter3 = actors.find((*it).first);
 
             Actor* neighbor = *iter3;
-	    cout<< current->name << "  :  " << neighbor->name<<endl;
 
-            if (neighbor->dist > current->dist + 1) {
+            if (neighbor->dist == INT_MAX) {
                 neighbor->dist = current->dist + 1;
                 neighbor->prev = current;
+		neighbor->sharedMovie = sharedMovie;
                 //add movie to the path
                 toExplore.push(neighbor);
+		
             }
-	    i++;
         }
     }
     
-   
+  
 
     auto iterat = actors.find(actor2);
 
+    Actor* actorr = *iterat;
+    
     if ((*iterat)->prev == nullptr) return path;
+    while(actorr->prev != nullptr){  
+    
+     cout << "hell0 "<<endl;
+     path.emplace_back(actorr->name);
+     path.emplace_back(actorr->sharedMovie->getName());
+
+     actorr = actorr->prev;
+    
+    }
+     path.emplace_back(actor1->name);
 
     return path;
 }

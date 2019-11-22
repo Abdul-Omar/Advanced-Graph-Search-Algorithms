@@ -96,10 +96,10 @@ int main(int argc, char* argv[]) {
     out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
     // find shortest path between each pair of actors
-    /*for (auto it = pairs.begin(); it != pairs.end(); ++it) {
-      */  
+    for (auto it = pairs.begin(); it != pairs.end(); ++it) {
+     
 	
-        pair<string, string> actors = pairs[0];
+        pair<string, string> actors = *it;
    
         Actor* actor1 = new Actor(actors.first);
         Actor* actor2 = new Actor(actors.second);
@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 
         delete (actor1);
         delete (actor2);
-    //}
+    }
 
 
 
