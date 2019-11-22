@@ -7,35 +7,29 @@
 using namespace std;
 using namespace testing;
 
-class SimpleActorGraph: public ::testing::Test {
+class SimpleActorGraph : public ::testing::Test {
   protected:
-
   public:
 };
 
-TEST_F(SimpleActorGraph, Test_loadFromFile){
-	ActorGraph graph;
+TEST_F(SimpleActorGraph, Test_loadFromFile) {
+    ActorGraph graph;
 
-	bool success = graph.loadFromFile("../testFile.txt", false);
+    bool success = graph.loadFromFile("../testFile.txt", false);
 
-	graph.buildGraph();
-	
-	ASSERT_EQ(true, success);
-		
+    graph.buildGraph();
+
+    ASSERT_EQ(true, success);
 }
 
-TEST_F(SimpleActorGraph, Test_loadFromFile_isEmpty){
-	ActorGraph graph;
-	
-	ASSERT_EQ(false, graph.loadFromFile("newTestFile.txt", false));
-		
+TEST_F(SimpleActorGraph, Test_loadFromFile_isEmpty) {
+    ActorGraph graph;
+
+    ASSERT_EQ(false, graph.loadFromFile("newTestFile.txt", false));
 }
 
-TEST_F(SimpleActorGraph, Test_shortestPath){
-	ActorGraph graph;
-	
-	graph.loadFromFile("../testFile.txt", false);
+TEST_F(SimpleActorGraph, Test_shortestPath) {
+    ActorGraph graph;
 
-	
-			
+    graph.loadFromFile("../testFile.txt", false);
 }

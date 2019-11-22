@@ -7,12 +7,9 @@
 using namespace std;
 using namespace testing;
 
-class SimplePathFinder: public ::testing::Test {
+class SimplePathFinder : public ::testing::Test {
   protected:
-
   public:
 };
 
-TEST_F(SimplePathFinder, Test_loadTestPairs){
-
-}
+TEST_F(SimplePathFinder, Test_loadTestPairs) {}

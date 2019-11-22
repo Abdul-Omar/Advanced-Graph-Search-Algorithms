@@ -28,17 +28,15 @@ class Actor {
 
     /* THis function essentially acts as the link or edge between two Actor
      * Nodes */
-    void connectActors(pair<Actor*, Movie*> & neighbor);
+    void connectActors(pair<Actor*, Movie*>& neighbor);
 };
 
 /* struct used to compare elements. Needed by set data structure */
 struct ActorComparator {
     bool operator()(Actor* const& a, Actor* const& b) {
-                // else sort them by names
-        return a->name< b->name;
+        // else sort them by names
+        return a->name < b->name;
     }
 };
-
-
 
 #endif

@@ -1,11 +1,12 @@
 /*
  * ActorGraph.cpp
- * Author: <YOUR NAME HERE>
- * Date:   <DATE HERE>
+ * Author: Andrew Masters, Abdikhalik Ahmed
  *
- * This file is meant to exist as a container for starter code that you can use
- * to read the input file format defined in imdb_2019.tsv. Feel free to modify
- * any/all aspects as you wish.
+ * ActorGraph.cpp implements the functions defined in ActorGraph.hpp
+ * This file has a set number of functions whos purpose is to load the file into
+ * the data structure (loadFromFile), build the graph connecting all the actors 
+ * (buildGraph), and to find the shortest path between two actors.
+ *
  */
 
 #include "ActorGraph.hpp"
@@ -36,6 +37,12 @@ ActorGraph::ActorGraph(void) {}
  * movie_year), otherwise all edge weights will be 1
  *
  * return true if file was loaded sucessfully, false otherwise
+ */
+
+/* loadFromFile : this function takes in two arguments, one that is the file
+ * in which actors, movies, and the year of those movies exist. The other argument
+ * determines weighted or unweighted graphs.
+ * All this information is then stored in the data structure of the class ActorGraph
  */
 bool ActorGraph::loadFromFile(const char* in_filename,
                               bool use_weighted_edges) {
@@ -78,39 +85,32 @@ bool ActorGraph::loadFromFile(const char* in_filename,
         string movie_title(record[1]);
         int year = stoi(record[2]);
 
-
-	
-
         // create a movie and actor objects
         Actor* newActor = new Actor(actor);
         Movie* newMovie = new Movie(movie_title, year);
 
-       
         // add actor to list of actors
         if (actors.find(newActor) == actors.end()) {
             actors.insert(newActor);
         } else {
             auto iter = actors.find(newActor);
-	    delete newActor;
-	    newActor = *iter;
+            delete newActor;
+            newActor = *iter;
         }
 
         // add actor to list of actors
         if (movies.find(newMovie) == movies.end()) {
             // add movie to list of movies.
             movies.insert(newMovie);
-	    
-	    newMovie->addActor(newActor);
-       
-       	} else {
-	    
-		    
-	    if((newMovie->actors).find(newActor) == (newMovie->actors).end()){
-            	auto iter = movies.find(newMovie);
-            	(*iter)->addActor(newActor);
-		
-	    }
-	    delete newMovie;
+
+            newMovie->addActor(newActor);
+
+        } else {
+            if ((newMovie->actors).find(newActor) == (newMovie->actors).end()) {
+                auto iter = movies.find(newMovie);
+                (*iter)->addActor(newActor);
+            }
+            delete newMovie;
         }
     }
 
@@ -123,13 +123,14 @@ bool ActorGraph::loadFromFile(const char* in_filename,
     return true;
 }
 
-/* function to build nodes and their connections */
+/* buildGraph : this function takes the actors and movies data structure that
+ * already exists in this class (ActorGraph) and connects the actors that acted
+ * in the same movie */
 void ActorGraph::buildGraph() {
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
         Movie* movie = *iter;
         // get all actors in this movie
         set<Actor*> actorsInMovie = movie->getAllActors();
-
 
         // connect all actors in this movie
         for (auto iter2 = actorsInMovie.begin(); iter2 != actorsInMovie.end();
@@ -139,27 +140,29 @@ void ActorGraph::buildGraph() {
             for (auto iter3 = actorsInMovie.begin();
                  iter3 != actorsInMovie.end(); ++iter3) {
                 Actor* actor2 = *iter3;
- 		
-		//prevent self loops in graph
-		if(actor1 == actor2) continue;
-                
-		pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
-		pair<Actor*, Movie*> p2 = make_pair(actor2, movie);
-		actor1->connectActors( p2 ) ;  // connect actors
-		actor2->connectActors(p1);
 
-		
+                // prevent self loops in graph
+                if (actor1->name.compare( actor2->name) == 0) continue;
+
+                pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
+                pair<Actor*, Movie*> p2 = make_pair(actor2, movie);
+                actor1->connectActors(p2);  // connect actors
+                actor2->connectActors(p1);
             }
         }
     }
 }
 
+/* shortestPath : this function takes in two arguments both being of the class
+ * Actor in order to find the shortest path between the two. This function uses
+ * the concept of a BFS to determine the shortest number of movies between two
+ * different actors
+ */
 vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
-  
     // initialize all distances to zero
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         (*iter)->dist = INT_MAX;
-	(*iter)->prev = nullptr;
+        (*iter)->prev = nullptr;
     }
 
     queue<Actor*> toExplore;
@@ -167,16 +170,14 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
     vector<string> path;  // holds the shortest path from one actor to another
 
     auto iter = actors.find(actor1);
-    
-    if(iter == actors.end())  {   
-	    
-	    cout << "actor does not exist "<<endl;
-	    
-	    return path;
-    
+
+    if (iter == actors.end()) {
+        cout << "actor does not exist " << endl;
+
+        return path;
     }
-   // cout << (*iter)->name<<endl;
-    
+    // cout << (*iter)->name<<endl;
+
     Actor* start = *iter;
     start->dist = 0;
 
@@ -185,53 +186,55 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
     while (!toExplore.empty()) {
        
 	 Actor* current = toExplore.front();
-         
-        //add Name to current Path
-        path.emplace_back(current->name);
 
+       
         toExplore.pop();
 
-        if (current == actor2) break;  // if we have reached thedesination actor
+        if (current->name.compare( actor2->name)  == 0 )break;  // if we have reached thedesination actor
 
         auto it = current->neighbors.begin();
-
+	int i = 0;
         for (; it != current->neighbors.end(); ++it) {
-			
-            // movie neighbor shares with current actor
+            cout << "We've been through here " << i << " number of times." << endl;
+	    if (current->name.compare( actor2->name)  == 0 )return path; 
+	    //movie neighbor shares with current actor
             Movie* sharedMovie = (*it).second;
-	
+
             // get the neighbor
             auto iter3 = actors.find((*it).first);
 
             Actor* neighbor = *iter3;
+	    cout<< current->name << "  :  " << neighbor->name<<endl;
 
-            if (neighbor->dist == INT_MAX) {
+            if (neighbor->dist > current->dist + 1) {
                 neighbor->dist = current->dist + 1;
                 neighbor->prev = current;
-                // add movie to the path
-                path.emplace_back(sharedMovie->getName());
+                //add movie to the path
                 toExplore.push(neighbor);
             }
+	    i++;
         }
     }
+    
+   
 
     auto iterat = actors.find(actor2);
 
-    if((*iterat)->prev == nullptr) return path;
+    if ((*iterat)->prev == nullptr) return path;
 
     return path;
 }
 
-ActorGraph::~ActorGraph(){
-	//delete all movies
-	for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
-        	delete *iter;
-	}
+// Deconstructor for the class ActorGraph that deletes all objects on the heap
+// Both the movies and actors stored on the heap are deleted here
+ActorGraph::~ActorGraph() {
+    // delete all movies
+    for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
+        delete *iter;
+    }
 
-	//delete all actors
-	for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
-        	delete *iter;
-	}
-
+    // delete all actors
+    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
+        delete *iter;
+    }
 }
-
