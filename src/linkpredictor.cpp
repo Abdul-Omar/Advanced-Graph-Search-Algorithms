@@ -25,25 +25,42 @@ using namespace std;
 
 void predictLinks(Actor* actor){
 	priority_queue<Actor*, ActorComparator> collab;
-	priority_queue<Actor*, ActorComparator> notYetCollab;
+	priority_queue<Actor*, ActorComparator> notYetCollab; 
 	
-	for(int i = 0; i < actor->neighbors.size(); i++){
-	    	Actor* actorNeighbor = actor->neighbor[i].first;
-
-		for(int j = 0;  actorNeighbor->neighbors.size(); i++){
-			for(int k = 0; actor->neighbors.size(); k++){
-				if(actorNeighbor->neighbor[j].name == actor->neighbor[k].name){
-					
-				}
-			}
-		}
+	//get all the adjacency list of this actor
+	vector<pair<Actor*, Movie*>> levelOne = actor->neighbors;
+	
+	
+	//used to count frequency of levelOne actors in levelOne actors' own adjacency list
+	vector<pair<string,int>> actorCount(actor->neighbors.size());
+	
+	//initialize vector with names and initial count 
+	for( int i = 0; i < levelOne.size(); i++) {  =	
+	   actorCount[i].first =  (levelOne[i].first)->name;
+	   actorCount[i].second = 0;
+	
 	}
-
-	for(int i = 0; i < movies->
 	
+	int counter = 0;
+	
+	//traverse through the adjacency list to find common actors with actor1
+	for( auto it = levelOne.begin(); it != levelOne.end(); ++it) {  
+		
+	    //get each of levelOne actor's list;
+	     vector<pair<Actor*, Movie*>>levelTwo = (*it)->neighbors;
+		
+	     for( auto iter = levelTwo.begin(); iter != levelTwo.end(); ++iter) {  
+	         
+		  //if we have found actor in neighbors list
+	         if((*it)->name.compare((*iter)->name) == 0) { 
+		 
+		  actorCount[i].second += 1;//increment count for this actor;	    
+		 }
+		 i++;	     
+	     }
+	}
 }
-
-
+	
 bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
     // Initialize the file stream
     ifstream infile(in_filename);
