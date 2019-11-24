@@ -106,14 +106,10 @@ int main(int argc, char* argv[]) {
 
         vector<string> path = graph.shortestPath(actor1, actor2);
 
-        for (auto iter = path.begin(); iter != path.end(); ++iter) {
-            out << *iter;
-
-                                  
-                out << " -> ";
-       
-
-           
+        for (int i = path.size()  -1 ; i >= 0; i--) {
+                             
+        	
+	       	out << path[i];   
         }
         out << endl;
 

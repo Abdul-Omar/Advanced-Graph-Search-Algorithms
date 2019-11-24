@@ -1,6 +1,2 @@
 (actor)--[movie#@year]-->(actor)--...
-Chris Evans -> Avengers: Age of Ultron -> Robert Downey Jr. -> 
-Nicole Kidman -> Birth -> Danny Huston -> Big Eyes -> Amy Adams -> 
-Bruce Willis -> Motherless Brooklyn -> Edward Norton -> Collateral Beauty -> Will Smith -> 
-Michael Fassbender -> X-Men: Apocalypse -> James McAvoy -> 
-50 Cent -> All Things Fall Apart -> Ray Liotta -> Hero Wanted -> Norman Reedus -> Air -> Djimon Hounsou -> 
+Djimon Hounsou(Norman Reedus)--[Air]-->(Ray Liotta)--[Hero Wanted]-->(50 Cent)--[All Things Fall Apart]-->

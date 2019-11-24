@@ -146,7 +146,7 @@ void ActorGraph::buildGraph() {
 
                 pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
                 pair<Actor*, Movie*> p2 = make_pair(actor2, movie);
-                actor1->connectActors(p2);  // connect actors
+                actor1->connectActors(p2);  // connect actors to create neighbors
                 actor2->connectActors(p1);
             }
         }
@@ -164,6 +164,7 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         (*iter)->dist = INT_MAX;
         (*iter)->prev = nullptr;
+	(*iter)->sharedMovie = nullptr;
     }
 
     queue<Actor*> toExplore;
@@ -219,19 +220,25 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
 
     auto iterat = actors.find(actor2);
 
-    Actor* actorr = *iterat;
+    Actor* current = *iterat;
     
     if ((*iterat)->prev == nullptr) return path;
-    while(actorr->prev != nullptr){  
     
-     cout << "hell0 "<<endl;
-     path.emplace_back(actorr->name);
-     path.emplace_back(actorr->sharedMovie->getName());
+    while(current->prev){  
+    
+     //string str = "";
+	    
+     //str = str + "(" + current->name +  ")" + "--" + "[" + current->sharedMovie->getName() +  "]" + "-->";
+     path.emplace_back("(" + current->name + ")");
+     path.emplace_back("#@" + to_string(current->sharedMovie->getYear()) + "]-->");
+     
+     path.emplace_back("--[" + current->sharedMovie->getName());
 
-     actorr = actorr->prev;
+     //path.emplace_back(str);
+     current = current->prev;
     
     }
-     path.emplace_back(actor1->name);
+     path.emplace_back("(" + actor1->name + ")");
 
     return path;
 }

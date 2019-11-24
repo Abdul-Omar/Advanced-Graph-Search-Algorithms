@@ -19,6 +19,8 @@ class Actor {
 
     // actor's adjacency list
     vector<pair<Actor*, Movie*>> neighbors;
+
+    // to find shortest path between two actors
     Movie* sharedMovie = nullptr;
     Actor* prev = nullptr;
     int dist = 0;
