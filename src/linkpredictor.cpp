@@ -106,22 +106,28 @@ vector<string> predictLinks(Actor* actor){
 	   
            }
            
+	   int count = 0;//how many common neighbors it has with queryActor
+	   int k = 0;
 	   //computer total weight for each level two neighbor
 	   for( auto it = actorCount.begin(); it != actorCount.end(); ++it) { 
-	     		 
-	       weight += (*it).second;      
+	       if((*it).second != originalCount[k]) {  	
+	           count++; 
+	           weight += (*it).second;   
+	        
+	       } 
+	     k++;  
 	   }
            
 	   //get average weight for each levelTwo neighbor;
-	   int averageWeight = weight/actorCount.size();
+	   int averageWeight = weight/count;
            
 	   //insert levelTwo neighbor with its weight on to list
 	   levelTwoWeight.emplace(secondLevelNeighbors[i].first->name, averageWeight);
 	   
 	   //reset count map to original count	
-	   for( int i = 0; i < actorCount.size(); i++) {  	
+	   for( int j = 0; j < actorCount.size(); j++) {  	
 	      
-	       actorCount[(levelOne[i].first)->name] = originalCount[i];	
+	       actorCount[(levelOne[j].first)->name] = originalCount[j];	
 	   }
        }
 
@@ -211,7 +217,7 @@ int main(int argc, char* argv[]) {
     // write the header of the file first
     //out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-    Actor* actor = new Actor( "Kevin Bacon");
+    Actor* actor = new Actor( "Robert Downey Jr.");
     auto it = graph.actors.find(actor);
     vector<string> topFour = predictLinks(*it);
 
@@ -221,7 +227,7 @@ int main(int argc, char* argv[]) {
        cout<<topFour[i]<<endl;
     }
 
-
+   delete(actor);
 
     return 0;
 }
