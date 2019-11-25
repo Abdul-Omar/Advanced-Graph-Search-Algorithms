@@ -56,7 +56,7 @@ vector<string> predictLinks(Actor* actor){
 	   
 	       if ( levelOne[i].first->name == levelOne[j].first->name){ 
 	       
-	            actorCount[(levelOne[i].first)->name]++;	
+	            actorCount[(levelOne[j].first)->name]++;	
 	       } 
 	   
 	   }
@@ -133,8 +133,10 @@ vector<string> predictLinks(Actor* actor){
 
 	vector<string> topFour;
 	//return top 4 weights in priority queue
-	for(int i = 0; i < 4; i++){
-	    topFour.emplace_back(levelTwoWeight.top().first);	
+	while(!levelTwoWeight.empty()){
+	    topFour.emplace_back(levelTwoWeight.top().first);
+	    cout << "Name: " << levelTwoWeight.top().first << endl;
+    	    cout << "Weight: " << levelTwoWeight.top().second << endl;	    
 	    levelTwoWeight.pop();
 	}
 
@@ -224,7 +226,7 @@ int main(int argc, char* argv[]) {
     for( int i = 0; i < topFour.size(); i++) {  
     
     
-       cout<<topFour[i]<<endl;
+       //cout<<topFour[i]<<endl;
     }
 
    delete(actor);
