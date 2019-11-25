@@ -60,23 +60,24 @@ vector<string> predictLinks(Actor* actor){
 	       } 
 	   
 	   }
-            originalCount[i] = actorCount[(levelOne[i].first)->name];    
+            originalCount[i] = actorCount[(levelOne[i].first)->name]; 
+	    actorCount[(levelOne[i].first)->name] = 0;
 	}
-	
 
 	
 	//traverse through the adjacency list to find common actors with actor1
 	for( auto it = levelOne.begin(); it != levelOne.end(); ++it) {  
 		
 	    //get each of levelOne actor's list;
-	     vector<pair<Actor*, Movie*>>levelTwo = (*it).first->neighbors;
+	     vector<pair<Actor*, Movie*>> levelTwo = (*it).first->neighbors;
 		
 	     for( auto iter = levelTwo.begin(); iter != levelTwo.end(); ++iter) {  
                   
 		   //get all neighbors of query actor's neighbors;
-		  if(find(levelOne.begin(), levelOne.end(), *iter) == levelOne.end())  { 	 
+		  if(find(levelOne.begin(), levelOne.end(), *iter) != levelOne.end())  { 	 
 		 	 //add to list of second level neighbors for query actor
 		  	secondLevelNeighbors.emplace_back((*iter));
+			cout<<(*iter).first->name<<endl;
 		  }
 		      
 	     }
@@ -100,34 +101,29 @@ vector<string> predictLinks(Actor* actor){
 		 
 		     //update the count  
 		     if(it != actorCount.end()) 
-		    
-		        it->second = (it->second * 2);//double the weight	    	
+		        it->second =it->second + 1 ;//double the weight	    	
 	         }
 	   
            }
-           
-	   int count = 0;//how many common neighbors it has with queryActor
+            
 	   int k = 0;
 	   //computer total weight for each level two neighbor
 	   for( auto it = actorCount.begin(); it != actorCount.end(); ++it) { 
 	       if((*it).second != originalCount[k]) {  	
-	           count++; 
-	           weight += (*it).second;   
+	           
+	           weight += (*it).second * originalCount[k];  
 	        
 	       } 
 	     k++;  
 	   }
            
-	   //get average weight for each levelTwo neighbor;
-	   int averageWeight = weight/count;
-           
 	   //insert levelTwo neighbor with its weight on to list
-	   levelTwoWeight.emplace(secondLevelNeighbors[i].first->name, averageWeight);
+	   levelTwoWeight.emplace(secondLevelNeighbors[i].first->name, weight);
 	   
 	   //reset count map to original count	
 	   for( int j = 0; j < actorCount.size(); j++) {  	
 	      
-	       actorCount[(levelOne[j].first)->name] = originalCount[j];	
+	       actorCount[(levelOne[j].first)->name] = 0;	
 	   }
        }
 
