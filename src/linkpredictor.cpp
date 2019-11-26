@@ -123,7 +123,7 @@ vector<string> predictLinks(Actor* actor,
         ++actorCount[(v.first)->name];
     }
 
-    cout<<actorCount.size()<<endl;
+    //cout<<actorCount.size()<<endl;
    queue<Actor*> q;
 
    secondLevelNeighbors = BFS(actor,actors, 2);//get all second level neighbors
@@ -145,7 +145,7 @@ vector<string> predictLinks(Actor* actor,
 	    for(auto iter2 = levelOne.begin(); iter2 != levelOne.end(); ++iter2) { 
 	    
 	      if(((*iter2).first)->name.compare((*iter).first->name) == 0){ 
-			  
+		   cout << "found : "<< (*iter).first->name << " in : "<< (secondLevelNeighbors[i])->name << " neighbors " <<endl;	  
 	          ++levelTwoCount[(*iter2).first->name];
 	      
 	      } 
@@ -156,9 +156,14 @@ vector<string> predictLinks(Actor* actor,
 
         // computer total weight for each level two neighbor
         for (auto it = actorCount.begin(); it != actorCount.end(); ++it) {
-	    //cout <<levelTwoCount[(*it).first] <<endl;
-            weight += (*it).second * levelTwoCount[(*it).first];
+	     
+		cout << "hello"<<endl;
+	     //cout <<(*it).first <<endl;
+	    // cout <<actorCount[(*it).first]<<endl;
+            
+	    weight += (*it).second * levelTwoCount[(*it).first];
         }
+
 
         // insert levelTwo neighbor with its weight on to list
         levelTwoWeight.emplace(secondLevelNeighbors[i]->name, weight);
@@ -167,10 +172,10 @@ vector<string> predictLinks(Actor* actor,
   
     vector<string> topFour;
     // return top 4 weights in priority queue
-     for( int i = 0; i < 4; i++) {
+     for( int i = 0; i < levelTwoWeight.size(); i++) {
         topFour.emplace_back(levelTwoWeight.top().first);
-        // cout << "Name: " << levelTwoWeight.top().first << endl;
-        // cout << "Weight: " << levelTwoWeight.top().second << endl;
+        //cout << "Name: " << levelTwoWeight.top().first << endl;
+         //cout << "Weight: " << levelTwoWeight.top().second << endl;
         levelTwoWeight.pop();
     }
 
@@ -256,7 +261,7 @@ int main(int argc, char* argv[]) {
     vector<string> topFour = predictLinks(*it, graph.actors);
 
     for (int i = 0; i < topFour.size(); i++) {
-        cout<<topFour[i]<<endl;
+       // cout<<topFour[i]<<endl;
     }
 
     delete (actor);
