@@ -34,41 +34,73 @@ struct WeightComparator {
  * the concept of a BFS to determine the shortest number of movies between two
  * different actors
  */
-void bfs(Actor* actor, vector<Actor*>& levelTwo, queue<Actor*>& q, set<Actor*, ActorComparator> &actors, int level) {
-     
-    auto it = actors.find(actor);
-    Actor* actorr = *it;
-    
-    for (int i = 0; i < actorr->neighbors.size(); i++ ) {
-         
-        if (actorr->neighbors[i].first->dist != INT_MAX) continue;
-       actorr->neighbors[i].first->dist = actorr->neighbors[i].first->dist + 1;
-       q.push(actorr->neighbors[i].first);
-      }
-
-  
-    if (!q.empty()) {
-        actorr  = q.front();
-        q.pop();
-	 if(level == 2) {  
-    
-          levelTwo.emplace_back(actorr);
-	  level = 0;
-	  
-	  
-         }
-	   
-
-        bfs(actorr, levelTwo,q, actors, level + 1);
-	 
-       
+vector<Actor*> BFS(Actor*& actor1, set<Actor*, ActorComparator> & actors, int level) {
+    // initialize all distances to zero
+    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
+        (*iter)->dist = INT_MAX;
     }
+
+    queue<Actor*> toExplore;
+
+    vector<Actor*> levelTwo;
+
+    vector<string> path;  // holds the shortest path from one actor to another
+
+    auto iter = actors.find(actor1);
+
+    if (iter == actors.end()) {
+        cout << "actor does not exist " << endl;
+
+        }
+    // cout << (*iter)->name<<endl;
+
+    Actor* start = *iter;
+    start->dist = 0;
+
+    toExplore.push(start);
+
+    while (!toExplore.empty()) {
+        Actor* current = toExplore.front();
+        
+	if(current->dist == level) {  
+	
+	   levelTwo.emplace_back(current);
+	
+	}
+        
+	toExplore.pop();
+
+	if(current->dist == level + 1) break;//dont go to level 3
+
+      
+        auto it = current->neighbors.begin();
+
+        for (; it != current->neighbors.end(); ++it) {
+            // movie neighbor shares with current actor
+            Movie* sharedMovie = (*it).second;
+
+            // get the neighbor
+            auto iter3 = actors.find((*it).first);
+
+            Actor* neighbor = *iter3;
+
+            if (neighbor->dist == INT_MAX) {
+                neighbor->dist = current->dist + 1;
+                toExplore.push(neighbor);
+            }
+        }
+    }
+   return levelTwo;
 }
 
 vector<string> predictLinks(Actor* actor,
                             set<Actor*, ActorComparator>& actors) {
     // all neighbors of query actor's neighbors
     vector<Actor*> secondLevelNeighbors;
+
+    // all neighbors of query actor's neighbors
+    vector<Actor*> thirdLevelNeighbors;
+
 
     // get all the adjacency list of this actor
     vector<pair<Actor*, Movie*>> levelOne = actor->neighbors;
@@ -86,23 +118,17 @@ vector<string> predictLinks(Actor* actor,
         levelTwoCount[levelOne[i].first->name] = 0;
     }
 
-    // to reinstate original count of each neighbor
-    vector<int> originalCount(actor->neighbors.size());
-    int i = 0;
-
+  
     // get frequency of each friend in queryActor's neighbors
     for (auto v : levelOne) {
         ++actorCount[(v.first)->name];
     }
    queue<Actor*> q;
 
-   for(auto iter = actors.begin(); iter != actors.end(); ++iter) 
-	   (*iter)->dist = INT_MAX;
-    // get all valid second level neighbors
-    bfs(actor,secondLevelNeighbors,q, actors, 0);
+   secondLevelNeighbors = BFS(actor,actors, 2);//get all second level neighbors
 
-    cout << "size of secondLevel neighbors is " << secondLevelNeighbors.size()
-         << endl;
+   thirdLevelNeighbors = BFS(actor,actors, 3);//get all  third level neighbors
+
 
     // map of each second level neighbor and its weight
     priority_queue<pair<string, int>, vector<pair<string, int>>,
@@ -129,29 +155,18 @@ vector<string> predictLinks(Actor* actor,
 
         // computer total weight for each level two neighbor
         for (auto it = actorCount.begin(); it != actorCount.end(); ++it) {
+	    //cout <<(*it).first <<endl;
             weight += (*it).second * levelTwoCount[(*it).first];
         }
 
         // insert levelTwo neighbor with its weight on to list
         levelTwoWeight.emplace(secondLevelNeighbors[i]->name, weight);
-
-        // reset count map to original count
-        for (int j = 0; j < actorCount.size(); j++) {
-            actorCount[(levelOne[j].first)->name] = 0;
-        }
     }
 
-    /*for(int i = 0; i < levelOne.size(); i++){
-            cout << levelOne[i].first->name << endl;
-    }*/
-
-    for (int i = 0; i < secondLevelNeighbors.size(); i++) {
-        cout << secondLevelNeighbors[i]->name << endl;
-    }
-
+  
     vector<string> topFour;
     // return top 4 weights in priority queue
-    while (!levelTwoWeight.empty()) {
+     for( int i = 0; i < 4; i++) {
         topFour.emplace_back(levelTwoWeight.top().first);
         // cout << "Name: " << levelTwoWeight.top().first << endl;
         // cout << "Weight: " << levelTwoWeight.top().second << endl;
@@ -235,12 +250,12 @@ int main(int argc, char* argv[]) {
     // write the header of the file first
     // out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-    Actor* actor = new Actor("Kevin Bacon");
+    Actor* actor = new Actor("Katherine Waterston");
     auto it = graph.actors.find(actor);
     vector<string> topFour = predictLinks(*it, graph.actors);
 
     for (int i = 0; i < topFour.size(); i++) {
-        // cout<<topFour[i]<<endl;
+        cout<<topFour[i]<<endl;
     }
 
     delete (actor);
