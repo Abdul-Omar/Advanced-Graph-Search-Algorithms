@@ -4,7 +4,7 @@
  *
  * ActorGraph.cpp implements the functions defined in ActorGraph.hpp
  * This file has a set number of functions whos purpose is to load the file into
- * the data structure (loadFromFile), build the graph connecting all the actors 
+ * the data structure (loadFromFile), build the graph connecting all the actors
  * (buildGraph), and to find the shortest path between two actors.
  *
  */
@@ -40,9 +40,9 @@ ActorGraph::ActorGraph(void) {}
  */
 
 /* loadFromFile : this function takes in two arguments, one that is the file
- * in which actors, movies, and the year of those movies exist. The other argument
- * determines weighted or unweighted graphs.
- * All this information is then stored in the data structure of the class ActorGraph
+ * in which actors, movies, and the year of those movies exist. The other
+ * argument determines weighted or unweighted graphs. All this information is
+ * then stored in the data structure of the class ActorGraph
  */
 bool ActorGraph::loadFromFile(const char* in_filename,
                               bool use_weighted_edges) {
@@ -142,12 +142,13 @@ void ActorGraph::buildGraph() {
                 Actor* actor2 = *iter3;
 
                 // prevent self loops in graph
-                if (actor1->name.compare( actor2->name) == 0) continue;
+                if (actor1->name.compare(actor2->name) == 0) continue;
 
-                pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
+                // pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
                 pair<Actor*, Movie*> p2 = make_pair(actor2, movie);
-                actor1->connectActors(p2);  // connect actors to create neighbors
-                actor2->connectActors(p1);
+                actor1->connectActors(
+                    p2);  // connect actors to create neighbors
+                          // actor2->connectActors(p1);
             }
         }
     }
@@ -159,12 +160,11 @@ void ActorGraph::buildGraph() {
  * different actors
  */
 vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
-    
     // initialize all distances to zero
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         (*iter)->dist = INT_MAX;
         (*iter)->prev = nullptr;
-	(*iter)->sharedMovie = nullptr;
+        (*iter)->sharedMovie = nullptr;
     }
 
     queue<Actor*> toExplore;
@@ -186,18 +186,17 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
     toExplore.push(start);
 
     while (!toExplore.empty()) {
-       
-	 Actor* current = toExplore.front();
+        Actor* current = toExplore.front();
 
-	toExplore.pop();
+        toExplore.pop();
 
-        if (current->name.compare( actor2->name)  == 0 )break;  // if we have reached thedesination actor
+        if (current->name.compare(actor2->name) == 0)
+            break;  // if we have reached thedesination actor
 
         auto it = current->neighbors.begin();
-        
-	for (; it != current->neighbors.end(); ++it) {
-           	   
-            //movie neighbor shares with current actor
+
+        for (; it != current->neighbors.end(); ++it) {
+            // movie neighbor shares with current actor
             Movie* sharedMovie = (*it).second;
 
             // get the neighbor
@@ -208,37 +207,34 @@ vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
             if (neighbor->dist == INT_MAX) {
                 neighbor->dist = current->dist + 1;
                 neighbor->prev = current;
-		neighbor->sharedMovie = sharedMovie;
-                //add movie to the path
+                neighbor->sharedMovie = sharedMovie;
+                // add movie to the path
                 toExplore.push(neighbor);
-		
             }
         }
     }
-    
-  
 
     auto iterat = actors.find(actor2);
 
     Actor* current = *iterat;
-    
-    if ((*iterat)->prev == nullptr) return path;
-    
-    while(current->prev){  
-    
-     //string str = "";
-	    
-     //str = str + "(" + current->name +  ")" + "--" + "[" + current->sharedMovie->getName() +  "]" + "-->";
-     path.emplace_back("(" + current->name + ")");
-     path.emplace_back("#@" + to_string(current->sharedMovie->getYear()) + "]-->");
-     
-     path.emplace_back("--[" + current->sharedMovie->getName());
 
-     //path.emplace_back(str);
-     current = current->prev;
-    
+    if ((*iterat)->prev == nullptr) return path;
+
+    while (current->prev) {
+        // string str = "";
+
+        // str = str + "(" + current->name +  ")" + "--" + "[" +
+        // current->sharedMovie->getName() +  "]" + "-->";
+        path.emplace_back("(" + current->name + ")");
+        path.emplace_back("#@" + to_string(current->sharedMovie->getYear()) +
+                          "]-->");
+
+        path.emplace_back("--[" + current->sharedMovie->getName());
+
+        // path.emplace_back(str);
+        current = current->prev;
     }
-     path.emplace_back("(" + actor1->name + ")");
+    path.emplace_back("(" + actor1->name + ")");
 
     return path;
 }

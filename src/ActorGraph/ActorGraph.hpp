@@ -26,16 +26,16 @@ using namespace std;
  * TODO: add class header
  */
 class ActorGraph {
-  //protected:
+    // protected:
     // Maybe add class data structure(s) here
-    public:
+  public:
     set<Actor*, ActorComparator> actors;  // list of all actors in the file
 
     set<Movie*, movieComparator> movies;  // set of all movies in the file
 
     // adjency list, each actor mapped against co-starring actors
 
- // public:
+    // public:
     /**
      * Constuctor of the Actor graph
      */

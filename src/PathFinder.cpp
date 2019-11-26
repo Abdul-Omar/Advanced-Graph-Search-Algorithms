@@ -15,7 +15,6 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#include <vector>
 #include "Actor.hpp"
 #include "ActorGraph.hpp"
 #include "Movie.hpp"
@@ -97,27 +96,21 @@ int main(int argc, char* argv[]) {
 
     // find shortest path between each pair of actors
     for (auto it = pairs.begin(); it != pairs.end(); ++it) {
-     
-	
         pair<string, string> actors = *it;
-   
+
         Actor* actor1 = new Actor(actors.first);
         Actor* actor2 = new Actor(actors.second);
 
         vector<string> path = graph.shortestPath(actor1, actor2);
 
-        for (int i = path.size()  -1 ; i >= 0; i--) {
-                             
-        	
-	       	out << path[i];   
+        for (int i = path.size() - 1; i >= 0; i--) {
+            out << path[i];
         }
         out << endl;
 
         delete (actor1);
         delete (actor2);
     }
-
-
 
     return 0;
 }
