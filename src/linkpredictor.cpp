@@ -107,10 +107,9 @@ vector<string> predictLinks(Actor* actor,
 
     // used to count frequency of levelOne actors in levelOne actors' own
     // adjacency list
-    unordered_map<string, int> actorCount;
+    unordered_map<string, int> actorCount(levelOne.size());
 
-    unordered_map<string, int> levelTwoCount(
-        levelOne.size());  // counts frequency of each queryactor's neighbors in
+    unordered_map<string, int> levelTwoCount(levelOne.size());  // counts frequency of each queryactor's neighbors in
                            // second level neighbor
 
     // initialize it with first level neigbhors names
@@ -123,11 +122,11 @@ vector<string> predictLinks(Actor* actor,
     for (auto v : levelOne) {
         ++actorCount[(v.first)->name];
     }
+
+    cout<<actorCount.size()<<endl;
    queue<Actor*> q;
 
    secondLevelNeighbors = BFS(actor,actors, 2);//get all second level neighbors
-
-   thirdLevelNeighbors = BFS(actor,actors, 3);//get all  third level neighbors
 
 
     // map of each second level neighbor and its weight
@@ -141,21 +140,23 @@ vector<string> predictLinks(Actor* actor,
 
         for (auto iter = secondLevelNeighbors[i]->neighbors.begin();
              iter != secondLevelNeighbors[i]->neighbors.end(); ++iter) {
-            auto iter3 = find(levelOne.begin(), levelOne.end(), *iter);
-
-            // if we have a level one actor in levelTwo's neighbors
-            if (iter3 != levelOne.end()) {
-                auto it = levelTwoCount.find((*iter).first->name);
-
-                // update the count
-                if (it != levelTwoCount.end())
-                    it->second = it->second + 1;  // double the weight
-            }
-        }
+            
+	    //if we find level one actor in level two neighbors adjacency list
+	    for(auto iter2 = levelOne.begin(); iter2 != levelOne.end(); ++iter2) { 
+	    
+	      if(((*iter2).first)->name.compare((*iter).first->name) == 0){ 
+			  
+	          ++levelTwoCount[(*iter2).first->name];
+	      
+	      } 
+	    
+	   }
+            
+      }
 
         // computer total weight for each level two neighbor
         for (auto it = actorCount.begin(); it != actorCount.end(); ++it) {
-	    //cout <<(*it).first <<endl;
+	    //cout <<levelTwoCount[(*it).first] <<endl;
             weight += (*it).second * levelTwoCount[(*it).first];
         }
 
@@ -250,7 +251,7 @@ int main(int argc, char* argv[]) {
     // write the header of the file first
     // out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-    Actor* actor = new Actor("Katherine Waterston");
+    Actor* actor = new Actor("Samuel L. Jackson");
     auto it = graph.actors.find(actor);
     vector<string> topFour = predictLinks(*it, graph.actors);
 
