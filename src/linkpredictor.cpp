@@ -26,7 +26,7 @@ struct WeightComparator {
         if (left.second == right.second) {
             return left.first > right.first;
         }
-        return left.second > right.second;
+        return left.second < right.second;
     }
 };
 /* shortestPath : this function takes in two arguments both being of the class
@@ -93,8 +93,114 @@ vector<Actor*> BFS(Actor*& actor1, set<Actor*, ActorComparator> & actors, int le
    return levelTwo;
 }
 
-vector<string> predictLinks(Actor* actor,
-                            set<Actor*, ActorComparator>& actors) {
+
+void predictLinks2(Actor* actor,
+                            set<Actor*, ActorComparator>& actors, ofstream & out) {
+   
+
+    // get all the adjacency list of this actor
+    vector<pair<Actor*, Movie*>> levelOne = actor->neighbors;
+
+    // used to count frequency of levelOne actors in levelOne actors' own
+    // adjacency list
+    unordered_map<string, int> actorCount(levelOne.size());
+
+    unordered_map<string, int> levelOneCount(levelOne.size());  // counts frequency of each queryactor's neighbors in
+                           // second level neighbor
+
+    // initialize it with first level neigbhors names
+    for (int i = 0; i < levelOne.size(); i++) {
+        levelOneCount[levelOne[i].first->name] = 0;
+    }
+
+  
+    // get frequency of each friend in queryActor's neighbors
+    for (auto v : levelOne) {
+        ++actorCount[(v.first)->name];
+    }
+
+ 
+
+    // map of each second level neighbor and its weight
+    priority_queue<pair<string, int>, vector<pair<string, int>>,
+                   WeightComparator>
+        levelOneWeight;
+
+    for (int i = 0; i < levelOne.size(); i++) {
+
+	//the weight of each levelTwo neighbor
+        int weight = 0;
+
+        for (auto iter = levelOne[i].first->neighbors.begin(); iter != levelOne[i].first->neighbors.end(); ++iter) {
+
+	    //if we find level one actor in level two neighbors adjacency list
+	    for(auto iter2 = levelOne.begin(); iter2 != levelOne.end(); ++iter2) {
+	       
+		 if(((*iter2).first)->name.compare((*iter).first->name) == 0){ 
+	         
+		   //cout << "found :  " << ((*iter2).first)->name << " in " << ((*iter).first)->name << "neighbors " <<endl;
+		  
+		   ++levelOneCount[(*iter2).first->name];
+	
+		  break;
+	      
+	      } 
+	    
+	   }
+            
+      }
+
+        // computer total weight for each level two neighbor
+        for (auto it = actorCount.begin(); it != actorCount.end(); ++it) {
+	    
+	   weight += (*it).second * levelOneCount[(*it).first];
+
+        }
+
+	  // reset count of found first level neighbors in secondLevel's neighbors
+        for (int i = 0; i < levelOne.size(); i++) {
+            levelOneCount[levelOne[i].first->name] = 0;
+        }
+       
+       // insert levelTwo neighbor with its weight on to list
+        levelOneWeight.emplace(levelOne[i].first->name, weight);
+    }
+    
+  
+      vector<string> topFour;
+
+      
+
+    // return top 4 weights in priority queue
+    int k = 0;
+     while(  !levelOneWeight.empty() && topFour.size() < 4 ) {
+	     ++k;
+	  string actorr = levelOneWeight.top().first;
+	 
+	 if(  topFour.size() >= 1 && (actorr.compare(topFour.at(topFour.size() - 1)) == 0)) { 
+	    levelOneWeight.pop();
+	    continue;		 
+			 
+         }
+        topFour.emplace_back(actorr);
+        levelOneWeight.pop();     
+    }
+   
+     
+    for( int i = 0; i < topFour.size(); i++) {  
+    
+    
+      out << topFour[i];
+      out << '\t';
+    
+    }
+    out << '\n';
+}
+
+
+
+void predictLinks(Actor* actor,
+                            set<Actor*, ActorComparator>& actors, ofstream & out) {
     // all neighbors of query actor's neighbors
     vector<Actor*> secondLevelNeighbors;
 
@@ -135,18 +241,21 @@ vector<string> predictLinks(Actor* actor,
         levelTwoWeight;
 
     for (int i = 0; i < secondLevelNeighbors.size(); i++) {
-        // the weight of each levelTwo neighbor
+
+	//the weight of each levelTwo neighbor
         int weight = 0;
 
         for (auto iter = secondLevelNeighbors[i]->neighbors.begin();
              iter != secondLevelNeighbors[i]->neighbors.end(); ++iter) {
-            
+
 	    //if we find level one actor in level two neighbors adjacency list
-	    for(auto iter2 = levelOne.begin(); iter2 != levelOne.end(); ++iter2) { 
-	    
-	      if(((*iter2).first)->name.compare((*iter).first->name) == 0){ 
-		   cout << "found : "<< (*iter).first->name << " in : "<< (secondLevelNeighbors[i])->name << " neighbors " <<endl;	  
-	          ++levelTwoCount[(*iter2).first->name];
+	    for(auto iter2 = levelOne.begin(); iter2 != levelOne.end(); ++iter2) {
+	     
+		 if(((*iter2).first)->name.compare((*iter).first->name) == 0){ 
+	         
+		   ++levelTwoCount[(*iter2).first->name];
+	
+		  break;
 	      
 	      } 
 	    
@@ -156,39 +265,48 @@ vector<string> predictLinks(Actor* actor,
 
         // computer total weight for each level two neighbor
         for (auto it = actorCount.begin(); it != actorCount.end(); ++it) {
-	     
-		cout << "hello"<<endl;
-	     //cout <<(*it).first <<endl;
-	    // cout <<actorCount[(*it).first]<<endl;
-            
-	    weight += (*it).second * levelTwoCount[(*it).first];
+	    
+	   	   	    weight += (*it).second * levelTwoCount[(*it).first];
+
+        }
+
+	  // reset count of found first level neighbors in secondLevel's neighbors
+        for (int i = 0; i < levelOne.size(); i++) {
+            levelTwoCount[levelOne[i].first->name] = 0;
         }
 
 
-        // insert levelTwo neighbor with its weight on to list
+
+       
+       // insert levelTwo neighbor with its weight on to list
         levelTwoWeight.emplace(secondLevelNeighbors[i]->name, weight);
     }
-
   
     vector<string> topFour;
+
     // return top 4 weights in priority queue
-     for( int i = 0; i < levelTwoWeight.size(); i++) {
+    int k = 0;
+     while(  !levelTwoWeight.empty() && k < 4 ) {
+	     ++k;
         topFour.emplace_back(levelTwoWeight.top().first);
-        //cout << "Name: " << levelTwoWeight.top().first << endl;
-         //cout << "Weight: " << levelTwoWeight.top().second << endl;
         levelTwoWeight.pop();
     }
 
-    return topFour;
+    for( int i = 0; i < topFour.size(); i++) {  
+    
+    
+      out << topFour[i];
+      out << '\t';
+    
+    }
+    out << endl;
 }
 
-bool loadQueryActor(string in_filename, vector<string> queryActors) {
-    /*
+bool loadQueryActors(string in_filename, vector<string>& queryActors) {
       // Initialize the file stream
       ifstream infile(in_filename);
 
       bool have_header = false;
-
       // keep reading lines until the end of file is reached
       while (infile) {
           string s;
@@ -214,14 +332,13 @@ bool loadQueryActor(string in_filename, vector<string> queryActors) {
               if (!getline(ss, str, '\n')) break;
               record.push_back(str);
           }
-
+          
           if (record.size() != 1) {
-              // we should have exactly 2 columns
+              // we should have exactly 1 column
               continue;
           }
 
           string actor(record[0]);
-
           queryActors.emplace_back(actor);  // add to list of pairs
       }
       if (!infile.eof()) {
@@ -231,23 +348,31 @@ bool loadQueryActor(string in_filename, vector<string> queryActors) {
 
       infile.close();
       return true;
-      */
+      
 }
 
 int main(int argc, char* argv[]) {
-    string database(argv[1]);  // database file
+   
+     
 
-    // string pairsFile(argv[2]);  // the file containing the pairs
+     ofstream out(argv[3]); //open collab file for writing
 
-    // ofstream out;
+     ofstream out2(argv[4]); //open uncollab file for writing
 
-    // out.open(argv[3]);
 
-    // vector<pair<string, string>> pairs;
+     vector<string> actors;
 
-    // bool success = loadTestPairs(pairsFile, pairs);  // load the test pairs
+     bool success = loadQueryActors(argv[2], actors);  // load the test pairs
+    
+     if( actors.size() == 0) {  
+     
+      cout << "empty "<<endl;
 
-    ActorGraph graph;
+      return 0;
+     }
+
+    
+     ActorGraph graph;
 
     graph.loadFromFile(argv[1], false);
 
@@ -256,15 +381,27 @@ int main(int argc, char* argv[]) {
     // write the header of the file first
     // out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-    Actor* actor = new Actor("Samuel L. Jackson");
-    auto it = graph.actors.find(actor);
-    vector<string> topFour = predictLinks(*it, graph.actors);
+    
+      
+    for( int i = 0; i < actors.size(); i++) { 
+	  Actor* actor = new Actor( actors[i]); 
+        
+	 auto it = graph.actors.find(actor);
 
-    for (int i = 0; i < topFour.size(); i++) {
-       // cout<<topFour[i]<<endl;
+	 if(it == graph.actors.end())return 0;
+     
+          predictLinks(*it, graph.actors, out2);
+
+         predictLinks2(*it, graph.actors, out);
+
+	 delete(actor);
+
+      
     }
+        
+   
 
-    delete (actor);
+  
 
     return 0;
 }

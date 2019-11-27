@@ -75,15 +75,22 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 int main(int argc, char* argv[]) {
     string database(argv[1]);  // database file
 
-    string pairsFile(argv[2]);  // the file containing the pairs
+    string pairsFile(argv[3]);  // the file containing the pairs
 
     ofstream out;
 
-    out.open(argv[3]);
+    out.open(argv[4]);
 
     vector<pair<string, string>> pairs;
 
     bool success = loadTestPairs(pairsFile, pairs);  // load the test pairs
+
+    if( *argv[2] != 'u') {  
+    
+     cout << "cant do this "<<endl;
+     return 0;
+    
+    }
 
     ActorGraph graph;
 
@@ -111,6 +118,7 @@ int main(int argc, char* argv[]) {
         delete (actor1);
         delete (actor2);
     }
+    out.close();
 
     return 0;
 }
