@@ -379,7 +379,10 @@ int main(int argc, char* argv[]) {
     graph.buildGraph();  // build the graph to search
 
     // write the header of the file first
-    // out << "(actor)--[movie#@year]-->(actor)--..." << endl;
+    out << "Actor1,Actor2,Actor3,Actor4"<<endl; 
+    out2 << "Actor1,Actor2,Actor3,Actor4"<<endl;
+
+
 
     
       
