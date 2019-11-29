@@ -21,6 +21,17 @@
 
 using namespace std;
 
+/* struct used to compare elements. Needed by set data structure */
+struct ActorComparator2 {
+    bool operator()(pair<int, Actor*> const& a, pair<int, Actor*> const& b) {
+        
+	 if( a.first == b.first) return a.second->name < a.second->name;
+	// else sort them by distance
+        return a.first < b.first;
+    }
+};
+
+
 bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
     // Initialize the file stream
     ifstream infile(in_filename);
@@ -71,7 +82,85 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
     infile.close();
     return true;
 }
+  /*finds the shortest path in a weighted graph */
+ vector<string> dijkstra(Actor* actor1, Actor* actor2, set<Actor*, ActorComparator> & actors) { 
+    
+    auto iter = actors.find(actor1);
+    
+   vector<string> path;
+    
+   // initialize all distances to infinity
+    for(auto iter2  = actors.begin(); iter2!=actors.end(); ++iter2) { 
 
+	(*iter)->dist = INT_MAX;
+	(*iter)->prev = nullptr;
+	(*iter)->done = false;
+    }
+
+    priority_queue<pair<int, Actor*>, vector<pair<int, Actor*>>, ActorComparator2> pq;
+    
+    Actor* start = *iter;//start actor
+    start->dist = 0; 
+    
+    //add start actor to priority queue 
+    pq.emplace(make_pair(0, start));
+
+    while(!pq.empty()) { 
+	//deque actor from priority queue
+	pair<int, Actor*> current = pq.top();
+	pq.pop();
+        //if we have not visited actor before
+	if(current.second->done == false) { 
+	   
+	    current.second->done = true;
+
+	    vector<pair<Actor*, Movie* >> neighbors = current.second->neighbors; 
+	    
+	    for(auto iter3  = neighbors.begin(); iter3 != neighbors.end(); ++iter3) {
+		
+		
+		 pair<Actor*, Movie*> neighbor = *iter3;//get neighbor
+	
+		
+		unsigned int totalDist = current.second->dist + (1 + (2019 - neighbor.second->getYear()));
+		
+		   //do relaxation technique if sum of two sides is less than third side
+		if(totalDist < neighbor.first->dist) { 
+		   
+	            neighbor.first->dist = totalDist;
+		     
+		    neighbor.first->prev = current.second;
+		    
+		    neighbor.first->sharedMovie = neighbor.second;
+
+		    pq.emplace(make_pair(totalDist, neighbor.first));
+		}
+	    } 
+	}
+    }
+    //get the second actor
+    auto iterat = actors.find(actor2);
+
+    Actor* current = *iterat;
+
+    if ((*iterat)->prev == nullptr) return path;//we have not found any path to second actor
+    
+    //get path and output it as required
+    while (current->prev) {
+        
+	path.emplace_back("(" + current->name + ")");
+        path.emplace_back("#@" + to_string(current->sharedMovie->getYear()) +
+                          "]-->");
+
+        path.emplace_back("--[" + current->sharedMovie->getName());
+
+       
+        current = current->prev;
+    }
+    path.emplace_back("(" + actor1->name + ")");
+
+    return path;
+}
 int main(int argc, char* argv[]) {
     string database(argv[1]);  // database file
 

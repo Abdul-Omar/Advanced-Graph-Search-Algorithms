@@ -24,6 +24,7 @@ class Actor {
     Movie* sharedMovie = nullptr;
     Actor* prev = nullptr;
     int dist = 0;
+    bool done = false;
 
     // constructor for the class
     Actor(string name) : name(name){};
