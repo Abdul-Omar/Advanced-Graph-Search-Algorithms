@@ -1,5 +1,5 @@
 /*
- * ActorGraph.cpp
+ * movietraveller.cpp
  * Author: Andrew Masters, Abdulkhaliq Omar
  *
  * ActorGraph.cpp implements the functions defined in ActorGraph.hpp
@@ -13,20 +13,13 @@
 #include <bits/stdc++.h>
 #include <fstream>
 #include <iostream>
-#include <limits>
 #include <queue>
 #include <set>
 #include <sstream>
 #include <string>
-#include <unordered_set>
 #include <vector>
+#include "Edge.hpp"
 
-using namespace std;
-
-/**
- * Constructor of the Actor graph
- */
-ActorGraph::ActorGraph(void) {}
 
 /** You can modify this method definition as you wish
  *
@@ -44,7 +37,7 @@ ActorGraph::ActorGraph(void) {}
  * argument determines weighted or unweighted graphs. All this information is
  * then stored in the data structure of the class ActorGraph
  */
-bool ActorGraph::loadFromFile(const char* in_filename,
+bool loadFromFile(const char* in_filename,
                               bool use_weighted_edges) {
     // Initialize the file stream
     ifstream infile(in_filename);
@@ -123,6 +116,7 @@ bool ActorGraph::loadFromFile(const char* in_filename,
     return true;
 }
 
+
 /* buildGraph : this function takes the actors and movies data structure that
  * already exists in this class (ActorGraph) and connects the actors that acted
  * in the same movie */
@@ -154,101 +148,9 @@ void ActorGraph::buildGraph() {
     }
 }
 
-/* shortestPath : this function takes in two arguments both being of the class
- * Actor in order to find the shortest path between the two. This function uses
- * the concept of a BFS to determine the shortest number of movies between two
- * different actors
- */
-vector<string> ActorGraph::shortestPath(Actor*& actor1, Actor*& actor2) {
-    // initialize all distances to zero
-    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
-        (*iter)->dist = INT_MAX;
-        (*iter)->prev = nullptr;
-        (*iter)->sharedMovie = nullptr;
-    }
+void MakeSet("not sure yet on what to pass "){ } 
 
-    queue<Actor*> toExplore;
+Actor* find(Actor* actor){ }
 
-    vector<string> path;  // holds the shortest path from one actor to another
+void unionSets(Actor* actor1, Actor* actor2) {  }
 
-    auto iter = actors.find(actor1);
-
-    if (iter == actors.end()) {
-        cout << "actor does not exist " << endl;
-
-        return path;
-    }
-    // cout << (*iter)->name<<endl;
-
-    Actor* start = *iter;
-    start->dist = 0;
-
-    toExplore.push(start);
-
-    while (!toExplore.empty()) {
-        Actor* current = toExplore.front();
-
-        toExplore.pop();
-
-        if (current->name.compare(actor2->name) == 0)
-            break;  // if we have reached thedesination actor
-
-        auto it = current->neighbors.begin();
-
-        for (; it != current->neighbors.end(); ++it) {
-            // movie neighbor shares with current actor
-            Movie* sharedMovie = (*it).second;
-
-            // get the neighbor
-            auto iter3 = actors.find((*it).first);
-
-            Actor* neighbor = *iter3;
-
-            if (neighbor->dist == INT_MAX) {
-                neighbor->dist = current->dist + 1;
-                neighbor->prev = current;
-                neighbor->sharedMovie = sharedMovie;
-                // add movie to the path
-                toExplore.push(neighbor);
-            }
-        }
-    }
-
-    auto iterat = actors.find(actor2);
-
-    Actor* current = *iterat;
-
-    if ((*iterat)->prev == nullptr) return path;
-
-    while (current->prev) {
-        // string str = "";
-
-        // str = str + "(" + current->name +  ")" + "--" + "[" +
-        // current->sharedMovie->getName() +  "]" + "-->";
-        path.emplace_back("(" + current->name + ")");
-        path.emplace_back("#@" + to_string(current->sharedMovie->getYear()) +
-                          "]-->");
-
-        path.emplace_back("--[" + current->sharedMovie->getName());
-
-        // path.emplace_back(str);
-        current = current->prev;
-    }
-    path.emplace_back("(" + actor1->name + ")");
-
-    return path;
-}
-
-// Deconstructor for the class ActorGraph that deletes all objects on the heap
-// Both the movies and actors stored on the heap are deleted here
-ActorGraph::~ActorGraph() {
-    // delete all movies
-    for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
-        delete *iter;
-    }
-
-    // delete all actors
-    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
-        delete *iter;
-    }
-}
