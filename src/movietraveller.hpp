@@ -28,11 +28,13 @@ using namespace std;
 class Movietraveller { 
     protected:
         
-	std::set<Actor*, actorCompare> actors;
+	std::set<Actor*, actorCompare> actors;//all the actors in graph
 
-	std::set<Movie*, movieCompare> movies;
+	std::set<Movie*, movieCompare> movies;//all movies in graph
 
 	unordered_map<Actor*, Actor*> actorMap;//maps each actor with its parent
+
+	vector<Edge*> edges;//stores all the edges in the graph
 
     public:
 	Movietraveller() { } 

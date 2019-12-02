@@ -120,59 +120,76 @@ bool loadFromFile(const char* in_filename,
 /* buildGraph : this function takes the actors and movies data structure that
  * already exists in this class (ActorGraph) and connects the actors that acted
  * in the same movie */
-void ActorGraph::buildGraph() {
+void createEdges() {
+    
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
         Movie* movie = *iter;
         // get all actors in this movie
         set<Actor*> actorsInMovie = movie->getAllActors();
-
-        // connect all actors in this movie
+        
+        Actor* parent;//the parent of all actors in this movie
+        
+	int i = 0;
+        
+	// connect all actors in this movie
         for (auto iter2 = actorsInMovie.begin(); iter2 != actorsInMovie.end();
              ++iter2) {
-            Actor* actor1 = *iter2;
-
+	    
+	     if(i == 0) parent = *iter2;//make the first actor parent of all
+           
+             else {
+                   actorMap[*iter2] = parent;//set parent of child
+		   
+		   parent->children.emplace_back(*iter2);//add to parent's children
+	     
+	          (*iter2)->parent = parent;   
+	     }
+	   
+	    
+	     Actor* actor1 = *iter2;
+	   
             for (auto iter3 = actorsInMovie.begin();
                  iter3 != actorsInMovie.end(); ++iter3) {
-                Actor* actor2 = *iter3;
+               
+	        Actor* actor2 = *iter3;
 
                 // prevent self loops in graph
                 if (actor1->name.compare(actor2->name) == 0) continue;
 
-                // pair<Actor*, Movie*> p1 = make_pair(actor1, movie);
-                pair<Actor*, Movie*> p2 = make_pair(actor2, movie);
-                actor1->connectActors(
-                    p2);  // connect actors to create neighbors
-                          // actor2->connectActors(p1);
-            }
-        }
+		 
+                //create new edge with this two actors
+		Edge edge = new Edge(actor1, actor2, movie);
+		
+		//add it to list of all edges
+		edges.insert(edge);
+                        
+	    }
+	    i++;
     }
+  }
 }
 
-void MakeSet(set<Actor*, ActorComparator> actors){
-  
-   //initialize a disjoint set of all actors with parent being nullptr
-   for( auto iter = actors.begin();  iter != actors.end(); ++iter) {
-      //set parent to itself
-      actorMap[*iter] = *iter;
- 
-   }
-
-} 
-
-Actor* find(Actor* actor){ 
-
-
-
-
-
+Actor* find(Actor* actor){
+	//return parent
+	return actorMap[actor];	
 }
 
 void unionSets(Actor* actor1, Actor* actor2) { 
 
 
+	Actor* parent1 = find(actor1);
+	Actor* parent2 = find(actor2);
+       
+       	//already same set
+	if(parent1->name.compare(parent2->name) == 0) return;
 
-
-
-
+	for( auto  iter = parent1->children.begin(); iter != parent1->children.end(); ++iter) {  
+	
+	     parent2->children.emplace_back(*iter);
+	     (*iter)->parent = parent2;//make parent2 the parent of all parent1's children
+	  	
+	}
+        parent1->parent = parent2;
+	parent2->children.emplace_back(parent1);//add parent1 to parent2's children
 }
 

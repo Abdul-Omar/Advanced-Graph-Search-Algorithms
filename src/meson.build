@@ -9,3 +9,8 @@ linkpredictor_exe = executable('linkpredictor.cpp.executable',
 	sources: ['linkpredictor.cpp'],
 	dependencies: [actorgraph_dep],
 	install: true)
+
+movietraveller_exe = executable('movietraveller.cpp.executable',
+	sources: ['movietraveller.cpp'],
+	dependencies: [actorgraph_dep],
+	install: true)
