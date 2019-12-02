@@ -148,9 +148,31 @@ void ActorGraph::buildGraph() {
     }
 }
 
-void MakeSet("not sure yet on what to pass "){ } 
+void MakeSet(set<Actor*, ActorComparator> actors){
+  
+   //initialize a disjoint set of all actors with parent being nullptr
+   for( auto iter = actors.begin();  iter != actors.end(); ++iter) {
+      //set parent to itself
+      actorMap[*iter] = *iter;
+ 
+   }
 
-Actor* find(Actor* actor){ }
+} 
 
-void unionSets(Actor* actor1, Actor* actor2) {  }
+Actor* find(Actor* actor){ 
+
+
+
+
+
+}
+
+void unionSets(Actor* actor1, Actor* actor2) { 
+
+
+
+
+
+
+}
 

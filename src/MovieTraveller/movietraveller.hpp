@@ -20,6 +20,7 @@
 #include "Movie.hpp"
 #include "Actor.hpp"
 #include "Edge.hpp"
+#include <unordered_map>
 
 // Maybe include some data structures here
 
@@ -31,12 +32,14 @@ class Movietraveller {
 
 	std::set<Movie*, movieCompare> movies;
 
+	unordered_map<Actor*, Actor*> actorMap;//maps each actor with its parent
+
     public:
 	Movietraveller() { } 
 
 	bool loadFromFile(char const* in_filename, bool use_weighted_edges);
  
-	void MakeSet("not sure yet on what to pass ");  
+	void MakeSet(set<Actor*, ActorComparator);  
 
 	Actor* find(Actor* actor);
 

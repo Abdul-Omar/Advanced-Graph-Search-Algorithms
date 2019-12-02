@@ -26,6 +26,9 @@ class Actor {
     int dist = 0;
     bool done = false;
 
+    Actor* parent;
+    int rank;
+
     // constructor for the class
     Actor(string name) : name(name){};
 
