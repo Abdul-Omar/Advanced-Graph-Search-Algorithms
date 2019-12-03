@@ -26,25 +26,30 @@
 
 using namespace std;
 class Movietraveller { 
-    protected:
-        
-	std::set<Actor*, actorCompare> actors;//all the actors in graph
+    public:
 
-	std::set<Movie*, movieCompare> movies;//all movies in graph
+	Movietraveller() { } 
+        
+	std::set<Actor*, ActorComparator> actors;//all the actors in graph
+
+	std::set<Movie*, movieComparator> movies;//all movies in graph
 
 	unordered_map<Actor*, Actor*> actorMap;//maps each actor with its parent
 
 	vector<Edge*> edges;//stores all the edges in the graph
 
-    public:
-	Movietraveller() { } 
+	void createEdges();
 
-	bool loadFromFile(char const* in_filename, bool use_weighted_edges);
+	bool loadFromFile(char const* in_filename);
  
-	void MakeSet(set<Actor*, ActorComparator);  
-
 	Actor* find(Actor* actor);
 
-	void unionSets(Actor* act1, Actor* act2);
+	void unionSets(Actor* actor1, Actor* actor2);
+
+	//Kruskal's algorithm
+        vector<Edge*> Kruskals();
+	~Movietraveller();
 
 };
+
+#endif

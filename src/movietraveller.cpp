@@ -19,7 +19,9 @@
 #include <string>
 #include <vector>
 #include "Edge.hpp"
+#include "movietraveller.hpp"
 
+class Movietraveller;
 
 /** You can modify this method definition as you wish
  *
@@ -37,8 +39,7 @@
  * argument determines weighted or unweighted graphs. All this information is
  * then stored in the data structure of the class ActorGraph
  */
-bool loadFromFile(const char* in_filename,
-                              bool use_weighted_edges) {
+bool Movietraveller::loadFromFile(const char* in_filename) {
     // Initialize the file stream
     ifstream infile(in_filename);
 
@@ -120,7 +121,7 @@ bool loadFromFile(const char* in_filename,
 /* buildGraph : this function takes the actors and movies data structure that
  * already exists in this class (ActorGraph) and connects the actors that acted
  * in the same movie */
-void createEdges() {
+void Movietraveller::createEdges() {
     
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
         Movie* movie = *iter;
@@ -158,10 +159,10 @@ void createEdges() {
 
 		 
                 //create new edge with this two actors
-		Edge edge = new Edge(actor1, actor2, movie);
+		Edge *edge = new Edge(movie, actor1, actor2, 1 + (2019 - movie->getYear()));
 		
 		//add it to list of all edges
-		edges.insert(edge);
+		edges.emplace_back(edge);
                         
 	    }
 	    i++;
@@ -169,16 +170,44 @@ void createEdges() {
   }
 }
 
-Actor* find(Actor* actor){
+Actor* Movietraveller::find(Actor* actor){
 	//return parent
 	return actorMap[actor];	
 }
 
-void unionSets(Actor* actor1, Actor* actor2) { 
+void Movietraveller::unionSets(Actor* actor1, Actor* actor2) { 
 
 
 	Actor* parent1 = find(actor1);
 	Actor* parent2 = find(actor2);
+
+	if( parent1 == nullptr && parent2 == nullptr) {  
+	
+	
+	    actor1->parent = actor2;
+	    actor2->children.emplace_back(actor1);
+
+	   return;
+	
+	}
+
+	if( parent1 == nullptr) {
+       
+            actor1->parent = parent2;
+	    parent2->children.emplace_back(actor1);
+
+	    return;
+	}
+
+	if( parent2 == nullptr) {
+       
+
+            actor2->parent = parent1;
+	    parent1->children.emplace_back(actor2);
+
+	    return;
+
+	}
        
        	//already same set
 	if(parent1->name.compare(parent2->name) == 0) return;
@@ -193,3 +222,87 @@ void unionSets(Actor* actor1, Actor* actor2) {
 	parent2->children.emplace_back(parent1);//add parent1 to parent2's children
 }
 
+//Kruskal's algorithm
+vector<Edge*> Movietraveller::Kruskals() {
+      
+     vector<Edge*> MST;//stores resultant mst
+    
+     //sort all the edges
+     sort(edges.begin(), edges.end(), WeightComparator());
+
+   
+
+     while( MST.size() <  actors.size() - 1) {  
+     
+	     
+	      Edge* edge = edges.back();//get edge
+
+	      edges.pop_back();//remove it
+
+	      Actor* parent1 = find( edge->src);
+
+	      Actor* parent2 = find( edge->dest);
+
+	      if( parent1->name.compare(parent2->name) == 0) continue;
+
+	      unionSets(parent1, parent2);//merge two sets;
+	      
+	      MST.emplace_back(edge);//add edge to mst;
+     }
+     return MST;
+}
+
+// Deconstructor
+Movietraveller::~Movietraveller() {
+    // delete all movies
+    for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
+        delete *iter;
+    }
+
+    // delete all actors
+    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
+        delete *iter;
+    }
+
+    actorMap.clear();
+
+    for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
+	delete *iter;
+    }
+
+
+}
+
+
+int main(int argc,char* argv[]) {
+   
+    string database(argv[1]);  // database file
+
+
+    ofstream out;
+
+    out.open(argv[2]);
+
+    Movietraveller traveller;
+
+    traveller.loadFromFile(argv[1]);//load the file
+
+    traveller.createEdges();//create all the edges in graph
+    
+    vector<Edge*> MST = traveller.Kruskals(); //run Kruskal's
+
+    for( int i = 0; i < MST.size(); i++) {  
+    
+    
+       Edge* edge = MST[i];
+
+       out << edge->src->name;
+
+       out << edge->movie->getName();
+       out<< edge->dest->name;
+    
+    }
+   
+    return 0;
+
+}

@@ -5,14 +5,7 @@
 class Movie;
 class Actor;
 
-//compare weights of two edges
-struct weightComparator{  
 
-
-
-
-
-}
 class Edge {
 
     public:		
@@ -24,5 +17,13 @@ class Edge {
 
 	Edge(Movie* movie, Actor* src, Actor* dest, int weight):movie(movie), src(src), dest(dest), weight(weight){}
  
-        ~Edge();
 };
+//compare weights of two edges
+struct WeightComparator{  
+    bool operator()(Edge* const& a, Edge* const& b) {
+        
+	// else sort them by distance
+        return a->weight > b->weight;
+    }
+};
+#endif

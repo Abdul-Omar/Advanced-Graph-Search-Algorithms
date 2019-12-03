@@ -25,9 +25,8 @@ using namespace std;
 struct ActorComparator2 {
     bool operator()(pair<int, Actor*> const& a, pair<int, Actor*> const& b) {
         
-	 if( a.first == b.first) return a.second->name < a.second->name;
 	// else sort them by distance
-        return a.first < b.first;
+        return a.first > b.first;
     }
 };
 
@@ -82,19 +81,35 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
     infile.close();
     return true;
 }
+
+
   /*finds the shortest path in a weighted graph */
  vector<string> dijkstra(Actor* actor1, Actor* actor2, set<Actor*, ActorComparator> & actors) { 
-    
+
+    vector<string> path;
+     
     auto iter = actors.find(actor1);
-    
-   vector<string> path;
-    
+
+    if (iter == actors.end()) {
+        cout << "actor does not exist " << endl;
+
+        return path;
+    }
+
+    /*auto iter2 = actors.find(actor2);
+
+    if (iter2 == actors.end()) {
+        cout << "actor does not exist " << endl;
+
+        return path;
+    }*/
+
    // initialize all distances to infinity
     for(auto iter2  = actors.begin(); iter2!=actors.end(); ++iter2) { 
 
-	(*iter)->dist = INT_MAX;
-	(*iter)->prev = nullptr;
-	(*iter)->done = false;
+	(*iter2)->dist = INT_MAX;
+	(*iter2)->prev = nullptr;
+	(*iter2)->done = false;
     }
 
     priority_queue<pair<int, Actor*>, vector<pair<int, Actor*>>, ActorComparator2> pq;
@@ -109,7 +124,12 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 	//deque actor from priority queue
 	pair<int, Actor*> current = pq.top();
 	pq.pop();
-        //if we have not visited actor before
+
+
+	// if (current.second->name.compare(actor2->name) == 0)
+           // break;  // if we have reached thedesination acto
+       
+	 //if we have not visited actor before
 	if(current.second->done == false) { 
 	   
 	    current.second->done = true;
@@ -122,18 +142,18 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 		 pair<Actor*, Movie*> neighbor = *iter3;//get neighbor
 	
 		
-		unsigned int totalDist = current.second->dist + (1 + (2019 - neighbor.second->getYear()));
+		 int c = current.second->dist + (1 + (2019 - neighbor.second->getYear()));
 		
-		   //do relaxation technique if sum of two sides is less than third side
-		if(totalDist < neighbor.first->dist) { 
-		   
-	            neighbor.first->dist = totalDist;
+		 //do relaxation technique if sum of two sides is less than third side
+		if(c < neighbor.first->dist) { 
+		  
+	            neighbor.first->dist = c;
 		     
 		    neighbor.first->prev = current.second;
 		    
 		    neighbor.first->sharedMovie = neighbor.second;
 
-		    pq.emplace(make_pair(totalDist, neighbor.first));
+		    pq.emplace(make_pair(c, neighbor.first));
 		}
 	    } 
 	}
@@ -143,7 +163,7 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 
     Actor* current = *iterat;
 
-    if ((*iterat)->prev == nullptr) return path;//we have not found any path to second actor
+    //if ((*iterat)->prev == nullptr) return path;//we have not found any path to second actor
     
     //get path and output it as required
     while (current->prev) {
@@ -161,6 +181,8 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 
     return path;
 }
+
+
 int main(int argc, char* argv[]) {
     string database(argv[1]);  // database file
 
@@ -173,14 +195,7 @@ int main(int argc, char* argv[]) {
     vector<pair<string, string>> pairs;
 
     bool success = loadTestPairs(pairsFile, pairs);  // load the test pairs
-
-    if( *argv[2] != 'u') {  
     
-     cout << "cant do this "<<endl;
-     return 0;
-    
-    }
-
     ActorGraph graph;
 
     graph.loadFromFile(argv[1], false);
@@ -190,24 +205,60 @@ int main(int argc, char* argv[]) {
     // write the header of the file first
     out << "(actor)--[movie#@year]-->(actor)--..." << endl;
 
-    // find shortest path between each pair of actors
-    for (auto it = pairs.begin(); it != pairs.end(); ++it) {
-        pair<string, string> actors = *it;
+    if( *argv[2] == 'u') {  
 
-        Actor* actor1 = new Actor(actors.first);
-        Actor* actor2 = new Actor(actors.second);
+    	 // find shortest path between each pair of actors
+   	 for (auto it = pairs.begin(); it != pairs.end(); ++it) {
+    	    pair<string, string> actors = *it;
 
-        vector<string> path = graph.shortestPath(actor1, actor2);
+     	   Actor* actor1 = new Actor(actors.first);
+     	   Actor* actor2 = new Actor(actors.second);
 
-        for (int i = path.size() - 1; i >= 0; i--) {
-            out << path[i];
-        }
-        out << endl;
+     	   vector<string> path = graph.shortestPath(actor1, actor2);
 
-        delete (actor1);
-        delete (actor2);
+     	   for (int i = path.size() - 1; i >= 0; i--) {
+     	       out << path[i];
+   	     }
+   	     out << endl;
+
+    	    delete (actor1);
+   	     delete (actor2);
+    	}
+   	out.close();
+
+
+        return 0;
+    
     }
-    out.close();
 
+    else if( *argv[2] == 'w') { 
+
+    	 // find shortest path between each pair of actors
+   	 for (auto it = pairs.begin(); it != pairs.end(); ++it) {
+    	    pair<string, string> actors = *it;
+
+     	   Actor* actor1 = new Actor(actors.first);
+     	   Actor* actor2 = new Actor(actors.second);
+
+     	   vector<string> path = dijkstra(actor1, actor2, graph.actors);
+
+     	   for (int i = path.size() - 1; i >= 0; i--) {
+     	       out << path[i];
+   	     }
+   	     out << endl;
+
+    	    delete (actor1);
+   	     delete (actor2);
+    	}
+   	out.close();
+
+
+        return 0;
+    
+    }
+
+    cout << "Weighted or Unweighted was not specified in second argument" << endl;
     return 0;
+
+
 }
