@@ -242,7 +242,10 @@ Movietraveller::~Movietraveller() {
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
         delete *iter;
     }
-
+    for( auto iter = edges.begin(); iter != edges.end(); ++iter) { 
+    
+       delete(*iter);
+    }
     // delete all actors
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         delete *iter;
@@ -252,8 +255,7 @@ Movietraveller::~Movietraveller() {
 
 
 int main(int argc,char* argv[]) {
-   
-    string database(argv[1]);  // database file
+ 
 
 
     ofstream out;
