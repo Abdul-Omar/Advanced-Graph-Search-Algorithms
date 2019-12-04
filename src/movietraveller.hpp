@@ -34,7 +34,6 @@ class Movietraveller {
 
 	std::set<Movie*, movieComparator> movies;//all movies in graph
 
-	unordered_map<Actor*, Actor*> actorMap;//maps each actor with its parent
 
 	vector<Edge*> edges;//stores all the edges in the graph
 

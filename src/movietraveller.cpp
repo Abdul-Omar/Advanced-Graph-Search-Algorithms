@@ -41,8 +41,9 @@ class Movietraveller;
  */
 bool Movietraveller::loadFromFile(const char* in_filename) {
     // Initialize the file stream
-    ifstream infile(in_filename);
-
+    ifstream infile;
+    infile.open(in_filename);
+   
     bool have_header = false;
 
     // keep reading lines until the end of file is reached
@@ -254,10 +255,7 @@ Movietraveller::~Movietraveller() {
 }
 
 
-int main(int argc,char* argv[]) {
- 
-
-
+int main(int argc,char *argv[]) {
     ofstream out;
 
     out.open(argv[2]);
@@ -296,7 +294,7 @@ int main(int argc,char* argv[]) {
     out << "#NODES CONNECTED: " << traveller.actors.size() <<endl;
     out<< "#EDGES CHOSEN: " <<MST.size()<<endl;
     out <<"TOTAL EDGE WEIGHT: " <<weight<<endl;
-   
+    out.close(); 
     return 0;
 
 }

@@ -25,7 +25,7 @@ using namespace std;
 struct ActorComparator2 {
     bool operator()(pair<int, Actor*> const& a, pair<int, Actor*> const& b) {
         
-	// else sort them by distance
+	
         return a.first > b.first;
     }
 };
@@ -96,13 +96,13 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
         return path;
     }
 
-    /*auto iter2 = actors.find(actor2);
+    auto iter2 = actors.find(actor2);
 
     if (iter2 == actors.end()) {
         cout << "actor does not exist " << endl;
 
         return path;
-    }*/
+    }
 
    // initialize all distances to infinity
     for(auto iter2  = actors.begin(); iter2!=actors.end(); ++iter2) { 
@@ -163,7 +163,7 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 
     Actor* current = *iterat;
 
-    //if ((*iterat)->prev == nullptr) return path;//we have not found any path to second actor
+    if ((*iterat)->prev == nullptr) return path;//we have not found any path to second actor
     
     //get path and output it as required
     while (current->prev) {
@@ -184,7 +184,6 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
 
 
 int main(int argc, char* argv[]) {
-    string database(argv[1]);  // database file
 
     string pairsFile(argv[3]);  // the file containing the pairs
 

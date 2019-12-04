@@ -1,5 +1,14 @@
 (actor)--[movie#@year]-->(actor)--...
 (Samuel L. Jackson)--[Glass#@2019]-->(James McAvoy)--[X-Men: Apocalypse#@2016]-->(Michael Fassbender)
 (Michael Fassbender)--[Alien: Covenant#@2017]-->(Katherine Waterston)--[The Current War#@2017]-->(Tom Holland)
-(Robert Downey Jr.)--[Avengers: Endgame#@2019]-->(Samuel L. Jackson)--[Glass#@2019]-->(James McAvoy)--[X-Men: First Class#@2011]-->(Kevin Bacon)
-(Robert Downey Jr.)--[Spider-Man: Homecoming#@2017]-->(Tom Holland)
+(Morgan Freeman)--[Just Getting Started#@2017]-->(Rene Russo)--[Velvet Buzzsaw#@2019]-->(Jake Gyllenhaal)--[Spider-Man: Far from Home#@2019]-->(Tom Holland)
+(David Harbour)--[Hellboy#@2019]-->(Milla Jovovich)
+(Michael Harkins)--[New York Skyride#@1994]-->(Kevin Bacon)--[Songs to Keep: Treasures of an Adirondack Folk Collector#@2013]-->(Pete Seeger)--[Swim for the River#@2006]-->(Christopher Swain)
+
+(Dianne Wiest)--[Five Nights in Maine#@2015]-->(David Oyelowo)--[Gringo#@2018]-->(Charlize Theron)--[Tully#@2018]-->(Ron Livingston)--[Lucky#@2017]-->(David Lynch)--[Rooted in Peace#@2016]-->(Pete Seeger)
+(Kevin Bacon)--[The Darkness#@2016]-->(Brontis Jodorowsky)--[Par instinct#@2017]-->(Alexandra Lamy)--[We Need Your Vote#@2018]-->(Finnegan Oldfield)--[Escape from Raqqa#@2019]-->(Swann Arlaud)--[By the Grace of God#@2018]-->(Eric Caravaca)--[Les brigands#@2015]-->(Maximilian Schell)
+(Kyra Sedgwick)--[Villains#@2019]-->(Bill Skarsgard)--[Moomins and the Winter Wonderland#@2017]-->(Alicia Vikander)--[Euphoria#@2017]-->(Charles Dance)--[La valle di pietra#@1992]-->(Milos Kopecky)
+(Kevin Bacon)--[Eastwood Directs: The Untold Story#@2013]-->(Morgan Freeman)--[Angel Has Fallen#@2019]-->(Piper Perabo)--[10th & Wolf#@2006]-->(Brad Renfro)
+(Gary Oldman)--[Darkest Hour#@2017]-->(Lily James)--[Yesterday#@2019]-->(Ana de Armas)--[Overdrive#@2017]-->(Freddie Thorp)--[The Head Hunter#@2016]-->(Jack Hawkins)
+(Kevin Bacon)--[The Darkness#@2016]-->(Lucy Fry)--[She's Missing#@2019]-->(Josh Hartnett)--[Inherit the Viper#@2019]-->(Bruce Dern)--[Freaks#@2018]-->(Emile Hirsch)--[American Night#@2019]-->(Paz Vega)--[Ay, mi madre!#@2019]-->(Maria Alfonsa Rosso)--[Yerma#@1998]-->(Irene Papas)
+(Djimon Hounsou)--[King Arthur: Legend of the Sword#@2017]-->(Charlie Hunnam)--[Triple Frontier#@2019]-->(Ben Affleck)--[The Last Thing He Wanted#@2019]-->(Willem Dafoe)--[Manou the Swift#@2019]-->(Kate Winslet)--[Blackbird#@2019]-->(Sam Neill)--[Ride Like a Girl#@2019]-->(Sophia Forrest)--[Reaching Distance#@2018]-->(Wade Briggs)--[What If It Works?#@2017]-->(Anna Samson)--[36 Questions#@2018]-->(James Mason)
