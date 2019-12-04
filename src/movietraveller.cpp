@@ -128,7 +128,6 @@ void Movietraveller::createEdges() {
         // get all actors in this movie
         set<Actor*> actorsInMovie = movie->getAllActors();
         
-        Actor* parent;//the parent of all actors in this movie
         
 	int i = 0;
         
@@ -136,16 +135,6 @@ void Movietraveller::createEdges() {
         for (auto iter2 = actorsInMovie.begin(); iter2 != actorsInMovie.end();
              ++iter2) {
 	    
-	     if(i == 0) parent = *iter2;//make the first actor parent of all
-           
-             else {
-                   actorMap[*iter2] = parent;//set parent of child
-		   
-		   parent->children.emplace_back(*iter2);//add to parent's children
-	     
-	          (*iter2)->parent = parent;   
-	     }
-	   
 	    
 	     Actor* actor1 = *iter2;
 	   
@@ -160,9 +149,17 @@ void Movietraveller::createEdges() {
 		 
                 //create new edge with this two actors
 		Edge *edge = new Edge(movie, actor1, actor2, 1 + (2019 - movie->getYear()));
+	
+		bool found = false;
+		//add it to list of all edges if edge is not already there
+	/*	for( auto iter4 = edges.begin(); iter4 != edges.end(); ++iter4) {
+
+		   if( (*iter4)->src->name == actor2->name && (*iter4)->dest->name == actor1->name && (*iter4)->movie->getName() == movie->getName()) found = true;
+		}*/
 		
-		//add it to list of all edges
-		edges.emplace_back(edge);
+	       //if(!found)	
+		   edges.emplace_back(edge);
+		
                         
 	    }
 	    i++;
@@ -170,9 +167,24 @@ void Movietraveller::createEdges() {
   }
 }
 
+void Movietraveller::makeSet(set<Actor*, ActorComparator> actors) {  
+
+     for( auto iter = actors.begin(); iter != actors.end(); ++iter) {  
+        //set parent to itself;
+        (*iter)->parent = nullptr;
+	(*iter)->rank = 0;
+     } 
+}
+
 Actor* Movietraveller::find(Actor* actor){
-	//return parent
-	return actorMap[actor];	
+	
+	if(!actor->parent) return actor;
+         	
+         
+	actor->parent = find(actor->parent);
+       
+	 
+	return actor->parent;	
 }
 
 void Movietraveller::unionSets(Actor* actor1, Actor* actor2) { 
@@ -181,60 +193,28 @@ void Movietraveller::unionSets(Actor* actor1, Actor* actor2) {
 	Actor* parent1 = find(actor1);
 	Actor* parent2 = find(actor2);
 
-	if( parent1 == nullptr && parent2 == nullptr) {  
-	
-	
-	    actor1->parent = actor2;
-	    actor2->children.emplace_back(actor1);
-
-	   return;
-	
-	}
-
-	if( parent1 == nullptr) {
-       
-            actor1->parent = parent2;
-	    parent2->children.emplace_back(actor1);
-
-	    return;
-	}
-
-	if( parent2 == nullptr) {
-       
-
-            actor2->parent = parent1;
-	    parent1->children.emplace_back(actor2);
-
-	    return;
-
-	}
-       
+	       
        	//already same set
 	if(parent1->name.compare(parent2->name) == 0) return;
 
-	for( auto  iter = parent1->children.begin(); iter != parent1->children.end(); ++iter) {  
+        
+	parent1->parent = parent2;//add
 	
-	     parent2->children.emplace_back(*iter);
-	     (*iter)->parent = parent2;//make parent2 the parent of all parent1's children
-	  	
-	}
-        parent1->parent = parent2;
-	parent2->children.emplace_back(parent1);//add parent1 to parent2's children
 }
 
 //Kruskal's algorithm
 vector<Edge*> Movietraveller::Kruskals() {
-      
+   
      vector<Edge*> MST;//stores resultant mst
     
      //sort all the edges
      sort(edges.begin(), edges.end(), WeightComparator());
 
-   
+     
 
      while( MST.size() <  actors.size() - 1) {  
-     
-	     
+     		
+	      if(edges.size() == 0) break;
 	      Edge* edge = edges.back();//get edge
 
 	      edges.pop_back();//remove it
@@ -243,14 +223,18 @@ vector<Edge*> Movietraveller::Kruskals() {
 
 	      Actor* parent2 = find( edge->dest);
 
-	      if( parent1->name.compare(parent2->name) == 0) continue;
 
-	      unionSets(parent1, parent2);//merge two sets;
+              //prevent cycles
+	      if( parent1->name.compare(parent2->name) != 0){
+
+	          unionSets(parent1, parent2);//merge two sets;
 	      
-	      MST.emplace_back(edge);//add edge to mst;
+	          MST.emplace_back(edge);//add edge to mst;
+	      }
      }
      return MST;
 }
+
 
 // Deconstructor
 Movietraveller::~Movietraveller() {
@@ -263,13 +247,6 @@ Movietraveller::~Movietraveller() {
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         delete *iter;
     }
-
-    actorMap.clear();
-
-    for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
-	delete *iter;
-    }
-
 
 }
 
@@ -288,20 +265,35 @@ int main(int argc,char* argv[]) {
     traveller.loadFromFile(argv[1]);//load the file
 
     traveller.createEdges();//create all the edges in graph
+
+    traveller.makeSet(traveller.actors);
+
     
     vector<Edge*> MST = traveller.Kruskals(); //run Kruskal's
 
+    out << "(actor)<--[movie#@year]-->(actor)" << endl;
+    
+    int weight = 0;
     for( int i = 0; i < MST.size(); i++) {  
     
-    
        Edge* edge = MST[i];
+      
+       weight += edge->weight;
 
-       out << edge->src->name;
+       out <<  "(" << edge->src->name << ")";
+       
+       out << "<--[" << edge->movie->getName()<< "#@" << edge->movie->getYear() << "]-->";
 
-       out << edge->movie->getName();
-       out<< edge->dest->name;
+       out<< "(" << edge->dest->name << ")";
+
+     
+       out<< endl;
     
     }
+
+    out << "#NODES CONNECTED: " << traveller.actors.size() <<endl;
+    out<< "#EDGES CHOSEN: " <<MST.size()<<endl;
+    out <<"TOTAL EDGE WEIGHT: " <<weight<<endl;
    
     return 0;
 

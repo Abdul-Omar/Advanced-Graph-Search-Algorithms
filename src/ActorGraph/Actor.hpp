@@ -29,6 +29,7 @@ class Actor {
     vector<Actor*> children;//all the children of this sentinel actor
 
     Actor* parent;
+    int rank;
 
     // constructor for the class
     Actor(string name) : name(name){};

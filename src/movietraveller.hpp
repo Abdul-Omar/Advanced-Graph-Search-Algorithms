@@ -45,7 +45,8 @@ class Movietraveller {
 	Actor* find(Actor* actor);
 
 	void unionSets(Actor* actor1, Actor* actor2);
-
+         
+	void makeSet(set<Actor*, ActorComparator> actors);
 	//Kruskal's algorithm
         vector<Edge*> Kruskals();
 	~Movietraveller();
