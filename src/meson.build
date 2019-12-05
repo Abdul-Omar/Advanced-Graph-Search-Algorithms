@@ -14,3 +14,8 @@ movietraveler_exe = executable('movietraveler.cpp.executable',
 	sources: ['movietraveller.cpp', 'movietraveller.hpp', 'Edge.hpp'],
 	dependencies: [actorgraph_dep],
 	install: true)
+
+navigationsystem_exe = executable('navigationsystem.cpp.executable',
+	sources: ['navigation.cpp', 'navigation.hpp'],
+	dependencies: [],
+	install: true)

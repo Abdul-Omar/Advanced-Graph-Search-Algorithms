@@ -1,0 +1,6 @@
+(location)-->(location)
+(Revelle)-->(MainGym)
+(UniversityCenter)-->(PriceCenter)-->(Geisel)
+(ERC)-->(PangeaParking)-->(HopkinsParking)-->(Jacobs)-->(CSE)-->(Warren)
+(BioMedLib)-->(YorkHall)-->(Revelle)
+(Revelle)-->(MainGym)-->(Mandeville)-->(PriceCenter)-->(WarrenLectureHall)-->(CSE)-->(Warren)
