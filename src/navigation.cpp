@@ -315,7 +315,6 @@ int main(int argc,char *argv[]) {
     
     if (!loadPairs) return 0;
 
-    out << "(location)-->(location)" << endl;
     
     for( int i = 0; i < pairs.size(); i++) {  
     
