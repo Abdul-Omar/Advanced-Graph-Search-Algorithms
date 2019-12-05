@@ -1,3 +1,13 @@
+/*
+ * Movie.hpp
+ * Author: Andrew Masters, Abdulkhaliq Omar
+ *
+ * Movie.hpp defines, declares, and implements functions for the movie class
+ *
+ * The movie class holds a movie and all the actors of that movie
+ * This class acts as a link or edge connecting actors
+ */
+
 #ifndef MOVIE_HPP
 #define MOVIE_HPP
 
@@ -11,7 +21,6 @@ class Actor;
 
 using namespace std;
 
-/* This class acts as the link or edge connecting actors */
 class Movie {
   protected:
     string name;  // name of movie
@@ -21,22 +30,33 @@ class Movie {
   public:
     set<Actor*> actors;  // actor(s) starring in this movie
 
-    string getName() { return name; }
+    string getName() { return name; }  // Get for name variable
 
-    int getYear() { return year; }
+    int getYear() { return year; }  // Get for year variable
 
     // constructor for the class
     Movie(string name, int year) : name(name), year(year){};
 
-    /* add an actor to list of actors starring in this  movie*/
-    void addActor(Actor* actor);
+    /* add an actor to list of actors starring in this movie*/
+    void addActor(Actor* actor) { actors.insert(actor); }
 
-    /* This function returns all actors depicted in this movie*/
-    set<Actor*> getAllActors();
-    /* Checks if two actors star in the same movie
-     */
+    // Get function for actors set
+    set<Actor*> getAllActors() { return actors; }
+
+    /* Checks if two actors star in the same movie */
     bool checkIfCostars(Actor*& actor1, Actor*& actor2);
 };
+
+/* Checks if two actors star in the same movie by checking
+ * if both actor1 and actor2 exist in the set of this movie
+ * */
+bool Movie::checkIfCostars(Actor*& actor1, Actor*& actor2) {
+    if (actors.find(actor1) != actors.end() &&
+        actors.find(actor2) != actors.end())
+        return true;
+
+    return false;
+}
 
 /* struct used to compare elements. Needed by set data structure */
 struct movieComparator {

@@ -9,47 +9,42 @@
  *
  */
 
-
-
 #ifndef MOVIETRAVELLER_HPP
 #define MOVIETRAVELLER_HPP
 
 #include <iostream>
-#include <utility>
 #include <set>
-#include "Movie.hpp"
+#include <unordered_map>
+#include <utility>
 #include "Actor.hpp"
 #include "Edge.hpp"
-#include <unordered_map>
+#include "Movie.hpp"
 
 // Maybe include some data structures here
 
 using namespace std;
-class Movietraveller { 
-    public:
+class Movietraveller {
+  public:
+    Movietraveller() {}
 
-	Movietraveller() { } 
-        
-	std::set<Actor*, ActorComparator> actors;//all the actors in graph
+    std::set<Actor*, ActorComparator> actors;  // all the actors in graph
 
-	std::set<Movie*, movieComparator> movies;//all movies in graph
+    std::set<Movie*, movieComparator> movies;  // all movies in graph
 
+    vector<Edge*> edges;  // stores all the edges in the graph
 
-	vector<Edge*> edges;//stores all the edges in the graph
+    void createEdges();
 
-	void createEdges();
+    bool loadFromFile(char const* in_filename);
 
-	bool loadFromFile(char const* in_filename);
- 
-	Actor* find(Actor* actor);
+    Actor* find(Actor* actor);
 
-	void unionSets(Actor* actor1, Actor* actor2);
-         
-	void makeSet(set<Actor*, ActorComparator> actors);
-	//Kruskal's algorithm
-        vector<Edge*> Kruskals();
-	~Movietraveller();
+    void unionSets(Actor* actor1, Actor* actor2);
 
+    void makeSet(set<Actor*, ActorComparator> actors);
+    // Kruskal's algorithm
+    vector<Edge*> Kruskals();
+    ~Movietraveller();
 };
 
 #endif

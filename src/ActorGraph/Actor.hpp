@@ -1,3 +1,15 @@
+/*
+ * Actor.hpp
+ * Author: Andrew Masters, Abdulkhaliq Omar
+ *
+ * Actor.hpp defines, declares, and implements the actor class
+ *
+ * This actor class creates an actor and holds all the neighbors
+ * or costars of the actor.
+ *
+ * This class forms the nodes by which the graph will be built on.
+ */
+
 #ifndef ACTOR_HPP
 #define ACTOR_HPP
 
@@ -11,8 +23,7 @@
 class Movie;
 
 using namespace std;
-/** This class forms the nodes in the graph
- */
+
 class Actor {
   public:
     string name;  // the name of the actor
@@ -26,7 +37,7 @@ class Actor {
     int dist = 0;
     bool done = false;
 
-    vector<Actor*> children;//all the children of this sentinel actor
+    vector<Actor*> children;  // all the children of this sentinel actor
 
     Actor* parent;
     int rank;
@@ -34,9 +45,10 @@ class Actor {
     // constructor for the class
     Actor(string name) : name(name){};
 
-    /* THis function essentially acts as the link or edge between two Actor
-     * Nodes */
-    void connectActors(pair<Actor*, Movie*>& neighbor);
+    /* This function creates a link between two nodes */
+    void connectActors(pair<Actor*, Movie*>& neighbor) {
+        neighbors.push_back(neighbor);
+    }
 };
 
 /* struct used to compare elements. Needed by set data structure */

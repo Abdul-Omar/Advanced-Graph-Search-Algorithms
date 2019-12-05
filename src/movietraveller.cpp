@@ -9,7 +9,7 @@
  *
  */
 
-#include "ActorGraph.hpp"
+#include "movietraveller.hpp"
 #include <bits/stdc++.h>
 #include <fstream>
 #include <iostream>
@@ -18,8 +18,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "ActorGraph.hpp"
 #include "Edge.hpp"
-#include "movietraveller.hpp"
 
 class Movietraveller;
 
@@ -43,7 +43,7 @@ bool Movietraveller::loadFromFile(const char* in_filename) {
     // Initialize the file stream
     ifstream infile;
     infile.open(in_filename);
-   
+
     bool have_header = false;
 
     // keep reading lines until the end of file is reached
@@ -118,124 +118,103 @@ bool Movietraveller::loadFromFile(const char* in_filename) {
     return true;
 }
 
-
 /* buildGraph : this function takes the actors and movies data structure that
  * already exists in this class (ActorGraph) and connects the actors that acted
  * in the same movie */
 void Movietraveller::createEdges() {
-    
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
         Movie* movie = *iter;
         // get all actors in this movie
         set<Actor*> actorsInMovie = movie->getAllActors();
-        
-        
-	int i = 0;
-        
-	// connect all actors in this movie
+
+        int i = 0;
+
+        // connect all actors in this movie
         for (auto iter2 = actorsInMovie.begin(); iter2 != actorsInMovie.end();
              ++iter2) {
-	    
-	    
-	     Actor* actor1 = *iter2;
-	   
+            Actor* actor1 = *iter2;
+
             for (auto iter3 = actorsInMovie.begin();
                  iter3 != actorsInMovie.end(); ++iter3) {
-               
-	        Actor* actor2 = *iter3;
+                Actor* actor2 = *iter3;
 
                 // prevent self loops in graph
                 if (actor1->name.compare(actor2->name) == 0) continue;
 
-		 
-                //create new edge with this two actors
-		Edge *edge = new Edge(movie, actor1, actor2, 1 + (2019 - movie->getYear()));
-	
-		bool found = false;
-		//add it to list of all edges if edge is not already there
-	/*	for( auto iter4 = edges.begin(); iter4 != edges.end(); ++iter4) {
+                // create new edge with this two actors
+                Edge* edge = new Edge(movie, actor1, actor2,
+                                      1 + (2019 - movie->getYear()));
 
-		   if( (*iter4)->src->name == actor2->name && (*iter4)->dest->name == actor1->name && (*iter4)->movie->getName() == movie->getName()) found = true;
-		}*/
-		
-	       //if(!found)	
-		   edges.emplace_back(edge);
-		
-                        
-	    }
-	    i++;
+                bool found = false;
+                // add it to list of all edges if edge is not already there
+                /*	for( auto iter4 = edges.begin(); iter4 != edges.end();
+                   ++iter4) {
+
+                           if( (*iter4)->src->name == actor2->name &&
+                   (*iter4)->dest->name == actor1->name &&
+                   (*iter4)->movie->getName() == movie->getName()) found = true;
+                        }*/
+
+                // if(!found)
+                edges.emplace_back(edge);
+            }
+            i++;
+        }
     }
-  }
 }
 
-void Movietraveller::makeSet(set<Actor*, ActorComparator> actors) {  
-
-     for( auto iter = actors.begin(); iter != actors.end(); ++iter) {  
-        //set parent to itself;
+void Movietraveller::makeSet(set<Actor*, ActorComparator> actors) {
+    for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
+        // set parent to itself;
         (*iter)->parent = nullptr;
-	(*iter)->rank = 0;
-     } 
+        (*iter)->rank = 0;
+    }
 }
 
-Actor* Movietraveller::find(Actor* actor){
-	
-	if(!actor->parent) return actor;
-         	
-         
-	actor->parent = find(actor->parent);
-       
-	 
-	return actor->parent;	
+Actor* Movietraveller::find(Actor* actor) {
+    if (!actor->parent) return actor;
+
+    actor->parent = find(actor->parent);
+
+    return actor->parent;
 }
 
-void Movietraveller::unionSets(Actor* actor1, Actor* actor2) { 
+void Movietraveller::unionSets(Actor* actor1, Actor* actor2) {
+    Actor* parent1 = find(actor1);
+    Actor* parent2 = find(actor2);
 
+    // already same set
+    if (parent1->name.compare(parent2->name) == 0) return;
 
-	Actor* parent1 = find(actor1);
-	Actor* parent2 = find(actor2);
-
-	       
-       	//already same set
-	if(parent1->name.compare(parent2->name) == 0) return;
-
-        
-	parent1->parent = parent2;//add
-	
+    parent1->parent = parent2;  // add
 }
 
-//Kruskal's algorithm
+// Kruskal's algorithm
 vector<Edge*> Movietraveller::Kruskals() {
-   
-     vector<Edge*> MST;//stores resultant mst
-    
-     //sort all the edges
-     sort(edges.begin(), edges.end(), WeightComparator());
+    vector<Edge*> MST;  // stores resultant mst
 
-     
+    // sort all the edges
+    sort(edges.begin(), edges.end(), WeightComparator());
 
-     while( MST.size() <  actors.size() - 1) {  
-     		
-	      if(edges.size() == 0) break;
-	      Edge* edge = edges.back();//get edge
+    while (MST.size() < actors.size() - 1) {
+        if (edges.size() == 0) break;
+        Edge* edge = edges.back();  // get edge
 
-	      edges.pop_back();//remove it
+        edges.pop_back();  // remove it
 
-	      Actor* parent1 = find( edge->src);
+        Actor* parent1 = find(edge->src);
 
-	      Actor* parent2 = find( edge->dest);
+        Actor* parent2 = find(edge->dest);
 
+        // prevent cycles
+        if (parent1->name.compare(parent2->name) != 0) {
+            unionSets(parent1, parent2);  // merge two sets;
 
-              //prevent cycles
-	      if( parent1->name.compare(parent2->name) != 0){
-
-	          unionSets(parent1, parent2);//merge two sets;
-	      
-	          MST.emplace_back(edge);//add edge to mst;
-	      }
-     }
-     return MST;
+            MST.emplace_back(edge);  // add edge to mst;
+        }
+    }
+    return MST;
 }
-
 
 // Deconstructor
 Movietraveller::~Movietraveller() {
@@ -243,58 +222,51 @@ Movietraveller::~Movietraveller() {
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
         delete *iter;
     }
-    for( auto iter = edges.begin(); iter != edges.end(); ++iter) { 
-    
-       delete(*iter);
+    for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
+        delete (*iter);
     }
     // delete all actors
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         delete *iter;
     }
-
 }
 
-
-int main(int argc,char *argv[]) {
+int main(int argc, char* argv[]) {
     ofstream out;
 
     out.open(argv[2]);
 
     Movietraveller traveller;
 
-    traveller.loadFromFile(argv[1]);//load the file
+    traveller.loadFromFile(argv[1]);  // load the file
 
-    traveller.createEdges();//create all the edges in graph
+    traveller.createEdges();  // create all the edges in graph
 
     traveller.makeSet(traveller.actors);
 
-    
-    vector<Edge*> MST = traveller.Kruskals(); //run Kruskal's
+    vector<Edge*> MST = traveller.Kruskals();  // run Kruskal's
 
     out << "(actor)<--[movie#@year]-->(actor)" << endl;
-    
+
     int weight = 0;
-    for( int i = 0; i < MST.size(); i++) {  
-    
-       Edge* edge = MST[i];
-      
-       weight += edge->weight;
+    for (int i = 0; i < MST.size(); i++) {
+        Edge* edge = MST[i];
 
-       out <<  "(" << edge->src->name << ")";
-       
-       out << "<--[" << edge->movie->getName()<< "#@" << edge->movie->getYear() << "]-->";
+        weight += edge->weight;
 
-       out<< "(" << edge->dest->name << ")";
+        out << "(" << edge->src->name << ")";
 
-     
-       out<< endl;
-    
+        out << "<--[" << edge->movie->getName() << "#@"
+            << edge->movie->getYear() << "]-->";
+
+        out << "(" << edge->dest->name << ")";
+
+        out << endl;
     }
 
-    out << "#NODES CONNECTED: " << traveller.actors.size() <<endl;
-    out<< "#EDGES CHOSEN: " <<MST.size()<<endl;
-    out <<"TOTAL EDGE WEIGHT: " <<weight<<endl;
-    out.close(); 
+    out << "#NODES CONNECTED: " << traveller.actors.size() << endl;
+    out << "#EDGES CHOSEN: " << MST.size() << endl;
+    out << "TOTAL EDGE WEIGHT: " << weight << endl;
+    out.close();
     return 0;
-
 }

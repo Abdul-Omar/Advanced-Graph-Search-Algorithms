@@ -24,12 +24,8 @@ class Location {
     int xCoord;
     int yCoord;
 
-
- 
     // constructor for the class
     Location(string name, int x, int y) : name(name), xCoord(x), yCoord(y){};
 };
-
-
 
 #endif

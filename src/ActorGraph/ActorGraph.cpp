@@ -23,27 +23,9 @@
 
 using namespace std;
 
-/**
- * Constructor of the Actor graph
- */
+/* Constructor of the Actor graph */
 ActorGraph::ActorGraph(void) {}
 
-/** You can modify this method definition as you wish
- *
- * Load the graph from a tab-delimited file of actor->movie relationships.
- *
- * in_filename - input filename
- * use_weighted_edges - if true, compute edge weights as 1 + (2019 -
- * movie_year), otherwise all edge weights will be 1
- *
- * return true if file was loaded sucessfully, false otherwise
- */
-
-/* loadFromFile : this function takes in two arguments, one that is the file
- * in which actors, movies, and the year of those movies exist. The other
- * argument determines weighted or unweighted graphs. All this information is
- * then stored in the data structure of the class ActorGraph
- */
 bool ActorGraph::loadFromFile(const char* in_filename,
                               bool use_weighted_edges) {
     // Initialize the file stream
