@@ -1,0 +1,4 @@
+(actor)<--[movie#@year]-->(actor)
+#NODES CONNECTED: 0
+#EDGES CHOSEN: 0
+TOTAL EDGE WEIGHT: 0

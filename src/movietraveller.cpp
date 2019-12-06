@@ -5,7 +5,7 @@
  * ActorGraph.cpp implements the functions defined in ActorGraph.hpp
  * This file has a set number of functions whos purpose is to load the file into
  * the data structure (loadFromFile), build the graph connecting all the actors
- * (buildGraph), and to find the shortest path between two actors.
+ * (createEdges), and to find the shortest path between two actors.
  *
  */
 
@@ -118,7 +118,7 @@ bool Movietraveller::loadFromFile(const char* in_filename) {
     return true;
 }
 
-/* buildGraph : this function takes the actors and movies data structure that
+/* createEdges : this function takes the actors and movies data structure that
  * already exists in this class (ActorGraph) and connects the actors that acted
  * in the same movie */
 void Movietraveller::createEdges() {
@@ -162,7 +162,10 @@ void Movietraveller::createEdges() {
         }
     }
 }
-
+/* makeSet : creates n disjoint sets(initializes n disjoint sets)
+* PARAMS:  actors- the disjoint sets to initialize
+* Return: NONE
+*/
 void Movietraveller::makeSet(set<Actor*, ActorComparator> actors) {
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         // set parent to itself;
@@ -170,7 +173,10 @@ void Movietraveller::makeSet(set<Actor*, ActorComparator> actors) {
         (*iter)->rank = 0;
     }
 }
-
+/* find : this function finds the sentinel of a node
+* PARAMS:  actor-the node whose sentinel to find
+* RETURN: true or false whether the file was read successfully
+*/
 Actor* Movietraveller::find(Actor* actor) {
     if (!actor->parent) return actor;
 
@@ -178,7 +184,10 @@ Actor* Movietraveller::find(Actor* actor) {
 
     return actor->parent;
 }
-
+/* unionSets : this function merges two dijoint sets
+* PARAMS:  actor1, actor2- the two disjoint sets to merge
+* RETURN: none
+*/
 void Movietraveller::unionSets(Actor* actor1, Actor* actor2) {
     Actor* parent1 = find(actor1);
     Actor* parent2 = find(actor2);
@@ -189,7 +198,12 @@ void Movietraveller::unionSets(Actor* actor1, Actor* actor2) {
     parent1->parent = parent2;  // add
 }
 
-// Kruskal's algorithm
+  
+/* Kruskals : this function implements Kruskal's algorithm
+* to produce minimum spanning tree(MST) of the graph
+* PARAMS: NONE
+* RETURN: vector containing all the edges in MST.
+*/ 
 vector<Edge*> Movietraveller::Kruskals() {
     vector<Edge*> MST;  // stores resultant mst
 
@@ -212,11 +226,12 @@ vector<Edge*> Movietraveller::Kruskals() {
 
             MST.emplace_back(edge);  // add edge to mst;
         }
+	edgesToDelete.emplace_back(edge);
     }
     return MST;
 }
 
-// Deconstructor
+/* Deconstructor */
 Movietraveller::~Movietraveller() {
     // delete all movies
     for (auto iter = movies.begin(); iter != movies.end(); ++iter) {
@@ -225,12 +240,23 @@ Movietraveller::~Movietraveller() {
     for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
         delete (*iter);
     }
+       for (auto iter = edgesToDelete.begin(); iter != edgesToDelete.end(); ++iter) {
+        delete (*iter);
+    }
+
     // delete all actors
     for (auto iter = actors.begin(); iter != actors.end(); ++iter) {
         delete *iter;
     }
 }
 
+
+
+/*main : The driver of the whole program
+*Params:  argc- num of arguments passed in commandline
+*         argv- array containing all arguments passed from commandline
+*Return: 0 - upon successful execution of program 
+*/
 int main(int argc, char* argv[]) {
     ofstream out;
 
@@ -248,7 +274,7 @@ int main(int argc, char* argv[]) {
 
     out << "(actor)<--[movie#@year]-->(actor)" << endl;
 
-    int weight = 0;
+    int weight = 0;// stores the sum of all weights of edges in graph
     for (int i = 0; i < MST.size(); i++) {
         Edge* edge = MST[i];
 

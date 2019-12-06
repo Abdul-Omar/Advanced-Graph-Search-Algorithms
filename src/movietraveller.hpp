@@ -32,18 +32,49 @@ class Movietraveller {
     std::set<Movie*, movieComparator> movies;  // all movies in graph
 
     vector<Edge*> edges;  // stores all the edges in the graph
+    vector<Edge*>edgesToDelete;//stores the MST to be deleted after
 
+   /* createEdges : this function takes the actors and movies data structure that
+    * already exists in this class (ActorGraph) and connects the actors that acted
+    * in the same movie
+   */
     void createEdges();
-
+  
+    
+    /* loadFromFile : this function takes in two arguments, one that is the file
+   * in which actors, movies, and the year of those movies exist. The other
+   * argument determines weighted or unweighted graphs. All this information is
+   * then stored in the data structure of the class ActorGraph
+   */
     bool loadFromFile(char const* in_filename);
 
+    /* find : this function finds the sentinel of a node
+    * PARAMS:  actor-the node whose sentinel to find
+    * RETURN: true or false whether the file was read successfully
+    */
     Actor* find(Actor* actor);
 
+     /* unionSets : this function merges two dijoint sets
+    * PARAMS:  actor1, actor2- the two disjoint sets to merge
+    * RETURN: none
+    */
     void unionSets(Actor* actor1, Actor* actor2);
-
+     
+    /* makeSet : creates n disjoint sets(initializes n disjoint sets)
+    * PARAMS:  actors- the disjoint sets to initialize
+    * Return: NONE
+    */
     void makeSet(set<Actor*, ActorComparator> actors);
-    // Kruskal's algorithm
+    
+    
+    /* Kruskals : this function implements Kruskal's algorithm
+    * to produce minimum spanning tree(MST) of the graph
+    * PARAMS: NONE
+    * RETURN: vector containing all the edges in MST.
+    */ 
     vector<Edge*> Kruskals();
+    
+    /* destructor for the class */
     ~Movietraveller();
 };
 

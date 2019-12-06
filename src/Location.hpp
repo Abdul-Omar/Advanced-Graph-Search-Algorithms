@@ -1,3 +1,7 @@
+/*
+ * Location.hpp - class declaraion and definition of variables and functions
+ * Author: Andrew Masters, Abdulkhaliq Omar
+ */
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
@@ -21,8 +25,8 @@ class Location {
     int dist = 0;
     bool done = false;
 
-    int xCoord;
-    int yCoord;
+    int xCoord;//x coordinate of location
+    int yCoord;//y coordinate of location
 
     // constructor for the class
     Location(string name, int x, int y) : name(name), xCoord(x), yCoord(y){};

@@ -1,12 +1,7 @@
 /*
- * movietraveller.cpp
- * Author: Andrew Masters, Abdulkhaliq Omar
- *
- * ActorGraph.cpp implements the functions defined in ActorGraph.hpp
- * This file has a set number of functions whos purpose is to load the file into
- * the data structure (loadFromFile), build the graph connecting all the actors
- * (buildGraph), and to find the shortest path between two actors.
- *
+ * navigation.cpp
+ * Authors: Andrew Masters, Abdulkhaliq Omar
+ * DATE: 12/3/2019
  */
 
 #include "navigation.hpp"
@@ -32,6 +27,12 @@ struct LocationComparator {
             return a.first > b.first;
     }
 };
+
+/* loadFromFile : this function takes one argument that is the file
+* contains locations with their x an y locations.
+*Params:  in_filename - the name of the file
+*Return: true or false whether the file was read successfully 
+*/
 
 bool Navigation::loadFromFile(string in_filename) {
     // Initialize the file stream
@@ -78,6 +79,12 @@ bool Navigation::loadFromFile(string in_filename) {
     infile.close();
     return true;
 }
+
+/* loadConnections : this function takes one argument that is the file
+* containing the space-seperated names of pairs of locations
+*Params:  in_filename - the name of the file
+*Return: true or false whether the file was read successfully 
+*/
 
 bool Navigation::loadConnections(string in_filename) {
     // Initialize the file stream
@@ -128,7 +135,14 @@ bool Navigation::loadConnections(string in_filename) {
     return true;
 }
 
-/*finds the shortest path in a weighted graph */
+/*Finds the shortest path from one location to another
+* in a weighted graph using A* star algorithm
+* Params:
+*     location1- start location
+*     location2- the destination location
+*
+*Return: vector of string containing th shortest path betweens the two locations
+*/
 vector<string> Navigation::AStarSearch(string location1, string locationEnd) {
     vector<string> path;
 
@@ -219,7 +233,11 @@ vector<string> Navigation::AStarSearch(string location1, string locationEnd) {
 
     return path;
 }
-
+/* eucledianDistance : Calculates the eucledian distance between two locations.
+*Params:  location1- the first locations
+*	      location2 - the second location
+*Return: the eucledian distance 
+*/
 int Navigation::eucledianDistance(Location* location1, Location* location2) {
     int x1 = location1->xCoord;
     int y1 = location1->yCoord;
@@ -235,6 +253,13 @@ Navigation::~Navigation() {
         delete (*iter).second;
     }
 }
+
+/*loadTestPairs: this loads a testfile containing
+* space-seperated names of pairs of locations to find shortest path for
+*Params:  in_filename - the name of the file
+ 	  pair - a vector containing all the pairs read so
+*Return: true or false whether the file was read successfully 
+*/
 
 bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
     // Initialize the file stream
@@ -280,6 +305,11 @@ bool loadTestPairs(string in_filename, vector<pair<string, string>>& pair) {
     return true;
 }
 
+/* main : The driver of the whole program
+*Params:  argc- num of arguments passed in commandline
+          argv- array containing all arguments passed from commandline
+*Return: 0- upon successful execution of program 
+*/
 int main(int argc, char* argv[]) {
     ofstream out;
 
