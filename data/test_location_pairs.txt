@@ -1,5 +1,3 @@
-Revelle MainGym
-UniversityCenter Geisel
-ERC Warren
-BioMedLib Revelle
-Revelle Warren
+(Vancouver)-->(Calgary)-->(Helena)
+(Chicago)-->(Omaha)-->(Denver)
+(Vancouver)-->(Calgary)-->(Helena)-->(Denver)-->(KansasCity)-->(SaintLouis)-->(Nashville)-->(Atlanta)-->(Miami)
